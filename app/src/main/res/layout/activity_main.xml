@@ -14,13 +14,29 @@
         tools:context=".MainActivity">
 
 
+        <View
+            android:id="@+id/view"
+            android:layout_width="409dp"
+            android:layout_height="83dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/transparentwhite"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bt_send" />
+
         <TextView
             android:id="@+id/tv_officeid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="Office:"
+            android:textColor="@color/Black"
             android:textSize="24sp"
+            android:textStyle="bold"
+            android:typeface="serif"
+            app:fontFamily="sans-serif-smallcaps"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/et_clientid" />
@@ -32,6 +48,7 @@
             android:layout_marginTop="8dp"
             android:ems="10"
             android:hint="Office ID"
+            android:textAlignment="center"
             android:inputType="number"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.454"
@@ -44,6 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:ems="10"
+            android:textAlignment="center"
             android:hint="Client ID"
             android:inputType="number"
             app:layout_constraintEnd_toEndOf="parent"
@@ -56,17 +74,27 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="Client:"
+            android:textColor="@color/Black"
             android:textSize="24sp"
+            android:textStyle="bold"
+            android:typeface="normal"
+            app:fontFamily="sans-serif-smallcaps"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/et_employeeid" />
 
         <TextView
             android:id="@+id/tv_title"
+            style="@style/TextAppearance.AppCompat.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
             android:text="Medilink"
-            android:textSize="36sp"
+            android:textColor="@color/blue_donation"
+            android:textSize="34sp"
+            android:textStyle="bold"
+            android:typeface="normal"
+            app:fontFamily="sans-serif-smallcaps"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -77,6 +105,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:ems="10"
+            android:textAlignment="center"
             android:hint="Employee ID"
             android:inputType="number"
             app:layout_constraintEnd_toEndOf="parent"
@@ -89,10 +118,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="Employee:"
+            android:textColor="@color/Black"
             android:textSize="24sp"
+            android:textStyle="bold"
+            android:typeface="normal"
+            app:fontFamily="sans-serif-smallcaps"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+            app:layout_constraintTop_toBottomOf="@+id/view2" />
 
         <CheckBox
             android:id="@+id/cb_in"
@@ -103,6 +136,8 @@
             android:layout_marginTop="24dp"
             android:text="IN"
             android:textSize="24sp"
+            android:textStyle="bold"
+            app:fontFamily="sans-serif-smallcaps"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/et_officeid" />
 
@@ -115,6 +150,8 @@
             android:layout_marginRight="50dp"
             android:text="OUT"
             android:textSize="24sp"
+            android:textStyle="bold"
+            app:fontFamily="sans-serif-smallcaps"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/et_officeid" />
 
@@ -122,13 +159,13 @@
             android:id="@+id/tv_label_nfc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="170dp"
-            android:layout_marginLeft="170dp"
             android:layout_marginTop="24dp"
-            android:layout_marginEnd="195dp"
-            android:layout_marginRight="195dp"
             android:text="NFC"
+            android:textColor="@color/Black"
             android:textSize="24sp"
+            android:textStyle="bold"
+            android:typeface="normal"
+            app:fontFamily="sans-serif-smallcaps"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cb_in" />
@@ -143,6 +180,8 @@
             android:layout_marginEnd="99dp"
             android:layout_marginRight="99dp"
             android:ems="10"
+            android:hint="Scan your card."
+            android:textAlignment="center"
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -162,7 +201,20 @@
             android:text="Send"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_nfc" />
+            app:layout_constraintTop_toBottomOf="@+id/et_nfc"
+
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="0dp"
+            android:layout_height="5dp"
+            android:background="@color/TransparentGreyComment"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

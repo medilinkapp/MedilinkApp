@@ -1,6 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimary">#d65602</color>
+    <color name="colorPrimaryDark">#575757</color>
+    <color name="colorPrimaryDark2">#8A3801</color>
+    <color name="colorAccent">#D6C102</color>
+
+    <!--<color name="colorPrimary">#3F51B5</color>-->
+    <!--<color name="colorPrimaryDark">#303F9F</color>-->
+    <!--<color name="colorPrimaryDark2">#0117a3</color>-->
+    <!--<color name="colorAccent">#FF4081</color>-->
+    <color name="messageBackGroudChat">#33c7c7c7</color>
+    <color name="messageBackGroudChatMe">#3380bc4f</color>
+
+    <color name="colorVersNumber">#962424</color>
+    <color name="colorListFocus">#fae2e2</color>
+    <color name="colorListFocusNight">#7c4747</color>
+    <color name="transparentwhite">#dfffffff</color>
+
+    <color name="colorWhite">#FFFF</color>
+    <color name="colorSelecction2">#339cbbc1</color>
+    <color name="colorSelecction">#9cbbc1</color>
+    <color name="blue_donation">#2f76b6</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="White">#FFF</color>
+    <color name="Black">#000</color>
+    <color name="Grey">#7F7F7F</color>
+    <color name="DarkGrey">#4f4f4f</color>
+    <color name="GreenDark">#0d5b0d</color>
+    <color name="TransparentGreyComment">#d1d1d1</color>
+    <color name="Transparent">#00000000</color>
+
+
+    <color name="hl_blue_color">#64466fcf</color>
+    <color name="hl_red_color">#96f29191</color>
+    <color name="hl_yellow_color">#64ffe902</color>
+    <color name="hl_green_color">#6483b64d</color>
+
+    <color name="hl_blue_color_n">#64466fcf</color>
+    <color name="hl_red_color_n">#96f29191</color>
+    <color name="hl_yellow_color_n">#64ffe902</color>
+    <color name="hl_green_color_n">#6483b64d</color>
+
+
+    <!--para el icono de conctaco-->
+    <color name="colorRosado_Contac">#fae2e2</color>
+    <color name="colorBlue_Contac">#e2e2fa</color>
+    <color name="colorRojo_Contac">#ffb8b5</color>
+    <color name="colorVerde_Contac">#caffe3</color>
+    <color name="colorMorado_Contac">#ffbdf1</color>
+
+    <color name="menu_text_color_n">#ffc9cccd</color>
+    <color name="menu_text_color_n_shadow">#9ea0a1</color>
+    <color name="toast_bg_day">#dda0b1b9</color>
+    <color name="toast_bg_night">#dd263238</color>
 </resources>

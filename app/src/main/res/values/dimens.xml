@@ -1,0 +1,28 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="nav_header_height">170dp</dimen>
+    <dimen name="fab_margin">10dp</dimen>
+    <dimen name="text_margin">6dp</dimen>
+    <dimen name="design_fab_size_mini">26dp</dimen>
+    <dimen name="margingtopHome">10sp</dimen>
+    <dimen name="margingbottonHome">10sp</dimen>
+    <dimen name="margingleftHome">15sp</dimen>
+    <dimen name="margingrightHome">15sp</dimen>
+    <dimen name="margingleftHomeImg">-15sp</dimen>
+    <dimen name="margingrightHomeImg">-15sp</dimen>
+    <dimen name="padding_social_objetes">10dp</dimen>
+    <dimen name="higth_textarea_comment">50dp</dimen>
+    <dimen name="higth_expdant_textarea_comment">150dp</dimen>
+    <dimen name="toast_text_size">16sp</dimen>
+    <dimen name="indent_large">16dp</dimen>
+    <dimen name="indent_medium">8dp</dimen>
+    <dimen name="indent_mlarge">24dp</dimen>
+    <dimen name="indent_small">4dp</dimen>
+    <dimen name="indent_xlarge">32dp</dimen>
+    <dimen name="indent_xmedium">12dp</dimen>
+    <dimen name="indent_xxlarge">64dp</dimen>
+
+
+</resources>
