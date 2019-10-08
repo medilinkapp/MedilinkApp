@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MedilinkApp</string>
+    <string name="CALLTYPE_IN">I</string>
+    <string name="CALLTYPE_OUT">O</string>
+</resources>
