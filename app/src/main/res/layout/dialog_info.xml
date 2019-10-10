@@ -38,7 +38,7 @@
 
 
                 <TextView
-                    android:id="@+id/tv_title"
+                    android:id="@+id/tv_title_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -61,6 +61,8 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:gravity="center"
+            android:paddingStart="@dimen/indent_medium"
+            android:paddingEnd="@dimen/indent_medium"
             android:orientation="vertical">
 
             <TextView

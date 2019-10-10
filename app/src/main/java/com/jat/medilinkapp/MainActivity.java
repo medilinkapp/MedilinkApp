@@ -2,35 +2,34 @@ package com.jat.medilinkapp;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Gravity;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.jat.medilinkapp.conf.APIService;
 import com.jat.medilinkapp.conf.ApiUtils;
 import com.jat.medilinkapp.model.NfcData;
 import com.jat.medilinkapp.nfcconf.NfcTag;
 
-import java.net.InetAddress;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MyDialog.DialogListener {
 
     private APIService mAPIService;
     private String TAG = "MEDILINK TAG";
@@ -101,11 +100,29 @@ public class MainActivity extends AppCompatActivity {
             nfcData.setClientId(Integer.valueOf(clientid.getText().toString()));
             nfcData.setOfficeid(Integer.valueOf(officeid.getText().toString()));
             nfcData.setCalltype(cbIn.isChecked() ? MainActivity.this.getString(R.string.CALLTYPE_IN) : MainActivity.this.getString(R.string.CALLTYPE_OUT));
-            nfcData.setNfc(nfc_id);
+            nfcData.setNfc(nfc.getText().toString());
             nfcData.setTasktype("12|45|77");
+            nfcData.setAppSender(this.getString(R.string.android_sender));
 
             sendPost(nfcData);
         }
+    }
+
+    @OnClick(R.id.bt_add_tasks)
+    void showDialogAddTasks() {
+        MyDialog dialogFragment = new MyDialog();
+
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("notAlertDialog", true);
+        dialogFragment.setArguments(bundle);
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+        dialogFragment.show(ft, "dialog");
     }
 
     private boolean validate() {
@@ -113,8 +130,25 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
 
+        if (!isValidateLength()) {
+            return false;
+        }
         return true;
+    }
 
+    private boolean isValidateLength() {
+        boolean validateEmployee = validateLength(employeeid, 5, 12, "Employee Id");
+        boolean validateClient = validateLength(clientid, 1, 5, "Client Id");
+        boolean validateOffice = validateLength(officeid, 1, 2, "Office Id");
+        return validateEmployee && validateClient && validateOffice;
+    }
+
+    private boolean validateLength(EditText editText, int min, int max, String nameField) {
+        if (editText.getText().length() < min || editText.getText().length() > max) {
+            editText.setError(nameField + ": should be between " + min + " and " + max + " digits!");
+            return false;
+        }
+        return true;
     }
 
     private boolean validateEmpty() {
@@ -136,105 +170,51 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendPost(NfcData nfcData) {
-        if (isInternetAvailable()) {
-            // RxJava
-            final Dialog progress = showProgress();
-            mAPIService.savePost(nfcData).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<NfcData>() {
-                        @Override
-                        public void onCompleted() {
-                            progress.dismiss();
-                            showResponse("Sent", "Data was sent.", true)
-                            ;
-                        }
-                        @Override
-                        public void onError(Throwable e) {
-                            progress.dismiss();
-                            showResponse("Error", e.getLocalizedMessage(), false);
-                        }
-                        @Override
-                        public void onNext(NfcData nfcData) {
+        new SupportUI().checkInternetConnetion().subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onCompleted() {
+                    }
 
-                        }
-                    });
-        } else {
-            showResponse("Error", "Not internet connection!", false);
-        }
+                    @Override
+                    public void onError(Throwable e) {
+                        new SupportUI().showResponse(MainActivity.this, "Error", "Not internet connection!", false);
+                    }
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        if (aBoolean)
+                            sendDataPost(nfcData);
+                    }
+                });
     }
 
-    public void showResponse(String titleMsg, String message, boolean success) {
-        // custom dialog
-        final Dialog dialogWF;
-        dialogWF = new Dialog(this, R.style.dialogStyle);
-        dialogWF.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialogWF.setContentView(R.layout.dialog_info);
-        dialogWF.setCanceledOnTouchOutside(false);
-        dialogWF.setCancelable(false);
-        // Setting dialogview
-        Window window = dialogWF.getWindow();
-        WindowManager.LayoutParams wlp = window.getAttributes();
-        wlp.gravity = Gravity.CENTER;
-        // wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        window.setAttributes(wlp);
+    private void sendDataPost(NfcData nfcData) {
+        // RxJava
+        final Dialog progress = new SupportUI().showProgress(this);
+        mAPIService.savePost(nfcData).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<NfcData>() {
+                    @Override
+                    public void onCompleted() {
+                        progress.dismiss();
+                        new SupportUI().showResponse(MainActivity.this, "Sent", "Data was sent.", true)
+                        ;
+                    }
 
-        TextView tvTitle = dialogWF.findViewById(R.id.tv_title);
-        TextView tvTitleMessage = dialogWF.findViewById(R.id.tv_title_message);
-        TextView tvMsgDialog = dialogWF.findViewById(R.id.tv_msg_dialog);
-        Button btOK = dialogWF.findViewById(R.id.bt_ok);
+                    @Override
+                    public void onError(Throwable e) {
+                        progress.dismiss();
+                        new SupportUI().showResponse(MainActivity.this, "Error", e.getLocalizedMessage(), false);
+                    }
 
-        tvTitleMessage.setText(titleMsg);
-        tvMsgDialog.setText(message);
+                    @Override
+                    public void onNext(NfcData nfcData) {
 
-        if (success) {
-            tvTitle.setTextColor(Color.GREEN);
-        } else {
-            tvTitle.setTextColor(Color.RED);
-        }
-
-        btOK.setOnClickListener(v -> {
-            if (success) {
-                dialogWF.dismiss();
-                finish();
-            } else {
-                dialogWF.dismiss();
-            }
-        });
-        dialogWF.show();
+                    }
+                });
     }
 
-
-    private Dialog showProgress() {
-        // custom dialog
-        final Dialog dialogWF;
-        dialogWF = new Dialog(this, R.style.dialogStyle);
-        dialogWF.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialogWF.setContentView(R.layout.dialog_info_progress);
-        dialogWF.setCanceledOnTouchOutside(false);
-        dialogWF.setCancelable(false);
-        // Setting dialogview
-        Window window = dialogWF.getWindow();
-        WindowManager.LayoutParams wlp = window.getAttributes();
-        wlp.gravity = Gravity.CENTER;
-        // wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        window.setAttributes(wlp);
-
-        TextView tv_msg_bible = dialogWF.findViewById(R.id.tv_msg_dialog);
-        tv_msg_bible.setText("Request is being processed.");
-
-        dialogWF.show();
-        return dialogWF;
-    }
-
-    private boolean isInternetAvailable() {
-        try {
-            InetAddress ipAddr = InetAddress.getByName("google.com");
-            //You can replace it with your name
-            return !ipAddr.equals("");
-
-        } catch (Exception e) {
-            return false;
-        }
-    }
 
     @Override
     protected void onResume() {
@@ -247,4 +227,10 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         nfc_tag.pause(this);
     }
+
+    @Override
+    public void onFinishEditDialog(@NotNull ArrayList<String> list) {
+
+    }
+
 }

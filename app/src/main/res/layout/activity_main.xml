@@ -15,6 +15,61 @@
 
 
         <View
+            android:id="@+id/view6"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/TransparentGreyComment"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cb_in" />
+
+        <View
+            android:id="@+id/view7"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/TransparentGreyComment"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bt_add_tasks" />
+
+        <View
+            android:id="@+id/view3"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/TransparentGreyComment"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_employeeid" />
+
+        <View
+            android:id="@+id/view4"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/TransparentGreyComment"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_clientid" />
+
+        <View
+            android:id="@+id/view5"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/TransparentGreyComment"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_officeid" />
+
+        <View
             android:id="@+id/view"
             android:layout_width="409dp"
             android:layout_height="83dp"
@@ -30,92 +85,109 @@
             android:id="@+id/tv_officeid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="16dp"
             android:text="Office:"
             android:textColor="@color/Black"
             android:textSize="24sp"
             android:textStyle="bold"
             android:typeface="serif"
             app:fontFamily="sans-serif-smallcaps"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_clientid" />
+            app:layout_constraintTop_toBottomOf="@+id/view4" />
 
         <EditText
             android:id="@+id/et_officeid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             android:ems="10"
             android:hint="Office ID"
-            android:textAlignment="center"
             android:inputType="number"
+            android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.454"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_officeid" />
+            app:layout_constraintTop_toBottomOf="@+id/view4" />
 
         <EditText
             android:id="@+id/et_clientid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             android:ems="10"
-            android:textAlignment="center"
             android:hint="Client ID"
             android:inputType="number"
+            android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_clientid" />
+            app:layout_constraintTop_toBottomOf="@+id/view3" />
 
         <TextView
             android:id="@+id/tv_clientid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="16dp"
             android:text="Client:"
             android:textColor="@color/Black"
             android:textSize="24sp"
             android:textStyle="bold"
             android:typeface="normal"
             app:fontFamily="sans-serif-smallcaps"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_employeeid" />
+            app:layout_constraintTop_toBottomOf="@+id/view3" />
 
-        <TextView
-            android:id="@+id/tv_title"
-            style="@style/TextAppearance.AppCompat.Body1"
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:id="@+id/tv_title_layout"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Medilink"
-            android:textColor="@color/blue_donation"
-            android:textSize="34sp"
-            android:textStyle="bold"
-            android:typeface="normal"
-            app:fontFamily="sans-serif-smallcaps"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@color/colorPrimary"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Medilink"
+                android:textColor="@color/white"
+                android:textSize="34sp"
+                android:textStyle="bold"
+                android:typeface="normal"
+                app:fontFamily="sans-serif-smallcaps" />
+        </LinearLayout>
+
 
         <EditText
             android:id="@+id/et_employeeid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             android:ems="10"
-            android:textAlignment="center"
             android:hint="Employee ID"
             android:inputType="number"
+            android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_employeeid" />
+            app:layout_constraintTop_toBottomOf="@+id/view2" />
 
         <TextView
             android:id="@+id/tv_employeeid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
             android:layout_marginTop="24dp"
             android:text="Employee:"
             android:textColor="@color/Black"
@@ -123,7 +195,6 @@
             android:textStyle="bold"
             android:typeface="normal"
             app:fontFamily="sans-serif-smallcaps"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view2" />
 
@@ -133,19 +204,19 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
             android:layout_marginLeft="50dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:text="IN"
             android:textSize="24sp"
             android:textStyle="bold"
             app:fontFamily="sans-serif-smallcaps"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_officeid" />
+            app:layout_constraintTop_toBottomOf="@+id/view5" />
 
         <CheckBox
             android:id="@+id/cb_out"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="50dp"
             android:layout_marginRight="50dp"
             android:text="OUT"
@@ -153,68 +224,96 @@
             android:textStyle="bold"
             app:fontFamily="sans-serif-smallcaps"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_officeid" />
+            app:layout_constraintTop_toBottomOf="@+id/view5" />
 
         <TextView
             android:id="@+id/tv_label_nfc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="16dp"
             android:text="NFC"
             android:textColor="@color/Black"
             android:textSize="24sp"
             android:textStyle="bold"
             android:typeface="normal"
             app:fontFamily="sans-serif-smallcaps"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cb_in" />
+            app:layout_constraintTop_toBottomOf="@+id/view7" />
 
         <EditText
             android:id="@+id/et_nfc"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="99dp"
-            android:layout_marginLeft="99dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="99dp"
-            android:layout_marginRight="99dp"
+            android:layout_marginTop="16dp"
+            android:clickable="true"
             android:ems="10"
-            android:hint="Scan your card."
-            android:textAlignment="center"
-            android:inputType="textPersonName"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:clickable="false"
             android:focusable="false"
-            app:layout_constraintTop_toBottomOf="@+id/tv_label_nfc" />
+            android:hint="Scan your card."
+            android:inputType="textPersonName"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_label_nfc"
+            app:layout_constraintTop_toBottomOf="@+id/view7" />
 
         <Button
             android:id="@+id/bt_send"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="158dp"
-            android:layout_marginLeft="158dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="32dp"
-            android:layout_marginEnd="165dp"
-            android:layout_marginRight="165dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+
             android:text="Send"
+            android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_nfc"
-
-            android:textSize="18sp"
-            android:textStyle="bold"/>
+            app:layout_constraintTop_toBottomOf="@+id/et_nfc" />
 
         <View
             android:id="@+id/view2"
             android:layout_width="0dp"
             android:layout_height="5dp"
-            android:background="@color/TransparentGreyComment"
+            android:background="@color/white"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_title_layout" />
+
+        <Button
+            android:id="@+id/bt_add_tasks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Add Tasks"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Add Taks"
+            app:fontFamily="sans-serif-smallcaps"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view6" />
+
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintBottom_toTopOf="@+id/bt_add_tasks"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

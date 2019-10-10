@@ -26,6 +26,9 @@ public class NfcData {
     @SerializedName("tasktype")
     @Expose
     private String tasktype;
+    @SerializedName("app_sender")
+    @Expose
+    private String appSender;
 
     public String getCalltype() {
         return calltype;
@@ -83,4 +86,11 @@ public class NfcData {
         this.tasktype = tasktype;
     }
 
+    public String getAppSender() {
+        return appSender;
+    }
+
+    public void setAppSender(String appSender) {
+        this.appSender = appSender;
+    }
 }
