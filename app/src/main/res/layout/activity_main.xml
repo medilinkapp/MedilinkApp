@@ -18,7 +18,11 @@
             android:id="@+id/view6"
             android:layout_width="0dp"
             android:layout_height="3dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             android:background="@color/TransparentGreyComment"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
@@ -29,7 +33,11 @@
             android:id="@+id/view7"
             android:layout_width="0dp"
             android:layout_height="3dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             android:background="@color/TransparentGreyComment"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
@@ -40,7 +48,11 @@
             android:id="@+id/view3"
             android:layout_width="0dp"
             android:layout_height="3dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             android:background="@color/TransparentGreyComment"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
@@ -51,7 +63,11 @@
             android:id="@+id/view4"
             android:layout_width="0dp"
             android:layout_height="3dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             android:background="@color/TransparentGreyComment"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
@@ -62,7 +78,11 @@
             android:id="@+id/view5"
             android:layout_width="0dp"
             android:layout_height="3dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             android:background="@color/TransparentGreyComment"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
@@ -85,16 +105,16 @@
             android:id="@+id/tv_officeid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginLeft="32dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:text="Office:"
             android:textColor="@color/Black"
             android:textSize="24sp"
             android:textStyle="bold"
             android:typeface="serif"
             app:fontFamily="sans-serif-smallcaps"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/et_officeid"
             app:layout_constraintTop_toBottomOf="@+id/view4" />
 
         <EditText
@@ -129,16 +149,16 @@
             android:id="@+id/tv_clientid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginLeft="32dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:text="Client:"
             android:textColor="@color/Black"
             android:textSize="24sp"
             android:textStyle="bold"
             android:typeface="normal"
             app:fontFamily="sans-serif-smallcaps"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/et_clientid"
             app:layout_constraintTop_toBottomOf="@+id/view3" />
 
 
@@ -186,16 +206,16 @@
             android:id="@+id/tv_employeeid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginLeft="32dp"
             android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:text="Employee:"
             android:textColor="@color/Black"
             android:textSize="24sp"
             android:textStyle="bold"
             android:typeface="normal"
             app:fontFamily="sans-serif-smallcaps"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/et_employeeid"
             app:layout_constraintTop_toBottomOf="@+id/view2" />
 
         <CheckBox
@@ -230,8 +250,6 @@
             android:id="@+id/tv_label_nfc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginLeft="32dp"
             android:layout_marginTop="16dp"
             android:text="NFC"
             android:textColor="@color/Black"
@@ -239,23 +257,26 @@
             android:textStyle="bold"
             android:typeface="normal"
             app:fontFamily="sans-serif-smallcaps"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view7" />
 
-        <EditText
-            android:id="@+id/et_nfc"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/tv_nfc"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:clickable="true"
             android:ems="10"
             android:focusable="false"
             android:hint="Scan your card."
             android:inputType="textPersonName"
             android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="italic"
+            app:fontFamily="sans-serif-smallcaps"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/tv_label_nfc"
-            app:layout_constraintTop_toBottomOf="@+id/view7" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_label_nfc" />
 
         <Button
             android:id="@+id/bt_send"
@@ -268,11 +289,11 @@
             android:layout_marginRight="8dp"
 
             android:text="Send"
-            android:textSize="18sp"
+            android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_nfc" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_nfc" />
 
         <View
             android:id="@+id/view2"
@@ -292,17 +313,27 @@
             android:text="Add Tasks"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_tasks_string" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/tv_tasks_string"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
-            android:hint="Add Taks"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:hint="Add Tasks"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:typeface="normal"
             app:fontFamily="sans-serif-smallcaps"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            tools:text="45,25,1"
+            android:gravity="center"
             app:layout_constraintTop_toBottomOf="@+id/view6" />
 
         <FrameLayout
@@ -314,6 +345,16 @@
             app:layout_constraintBottom_toTopOf="@+id/bt_add_tasks"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/img_nfc_checked"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_label_nfc"
+            app:srcCompat="@drawable/ic_check_circle_nfc" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

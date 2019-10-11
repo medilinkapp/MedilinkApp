@@ -3,4 +3,6 @@
     <string name="android_sender">Android Medilink</string>
     <string name="CALLTYPE_IN">I</string>
     <string name="CALLTYPE_OUT">O</string>
+    <string name="field_is_empty">Field is empty!</string>
+    <string name="should_be_selected">In or Out should be select!</string>
 </resources>

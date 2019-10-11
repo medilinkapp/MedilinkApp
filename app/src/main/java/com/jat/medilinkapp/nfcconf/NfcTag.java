@@ -7,7 +7,8 @@ import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Parcelable;
 import android.util.Log;
-import android.widget.EditText;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jat.medilinkapp.MainActivity;
@@ -17,7 +18,9 @@ import com.jat.medilinkapp.R;
 public class NfcTag {
 
     private TextView nfc_text;
+
     private NfcAdapter nfc_adapter;
+    private ImageView nfc_checked_img;
     private PendingIntent pending_intent;
     private IntentFilter[] write_tag_filters;
     private static final String TAG = "MEDILINK";
@@ -27,15 +30,14 @@ public class NfcTag {
 
     public void init(MainActivity activity) {
         nfc_adapter = NfcAdapter.getDefaultAdapter(activity);
-        nfc_text = (EditText) activity.findViewById(R.id.et_nfc);
+        nfc_text = activity.findViewById(R.id.tv_nfc);
+        nfc_checked_img = activity.findViewById(R.id.img_nfc_checked);
 
         if (nfc_adapter == null) {
-            nfc_text.setHint("NFC not supported.");
-            nfc_text.setError("NFC not supported.");
+            showErrorTvNfc("NFC not supported.");
         } else {
             if (!nfc_adapter.isEnabled()) {
-                nfc_text.setHint("NFC is disabled.");
-                nfc_text.setError("NFC is disabled.");
+                showErrorTvNfc("NFC is disabled.");
             }
         }
 
@@ -73,9 +75,7 @@ public class NfcTag {
             if (intent.hasExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)) {
                 return readMessagesNFC(intent);
             } else {
-                nfc_text.setHint("invalid card!");
-                nfc_text.setError("invalid card!");
-                nfc_text.setText("");
+                showErrorTvNfc("invalid card!");
             }
         }
 
@@ -138,15 +138,12 @@ public class NfcTag {
             String id = new String(msg.getRecords()[0].getPayload());
             //if size >= 8 taking last 8dig
             if (id.length() >= 8) {
-                id = id.substring(id.length()-8, id.length());
+                id = id.substring(id.length() - 8, id.length());
             }
-            nfc_text.setText(id);
-            nfc_text.setError(null);
+            showCheckedNfc(id);
             return id;
         } else {
-            nfc_text.setText("");
-            nfc_text.setHint("Card with empty value!");
-            nfc_text.setError("Card with empty value!");
+            showErrorTvNfc("Card with empty value!");
         }
         return "";
     }
@@ -165,6 +162,19 @@ public class NfcTag {
         nfc_adapter.disableForegroundDispatch(activity);
     }
 
+    private void showErrorTvNfc(String s) {
+        nfc_text.setHint(s);
+        nfc_text.setError(s);
+        nfc_text.setText("");
+        nfc_text.setVisibility(View.VISIBLE);
+        nfc_checked_img.setVisibility(View.GONE);
+    }
 
+    private void showCheckedNfc(String id) {
+        nfc_text.setText(id);
+        nfc_text.setVisibility(View.INVISIBLE);
+        nfc_checked_img.setVisibility(View.VISIBLE);
+        nfc_text.setError(null);
+    }
 }
 

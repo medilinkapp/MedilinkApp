@@ -5,14 +5,17 @@ import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.jat.medilinkapp.conf.APIService;
 import com.jat.medilinkapp.conf.ApiUtils;
 import com.jat.medilinkapp.model.NfcData;
 import com.jat.medilinkapp.nfcconf.NfcTag;
+import com.jat.medilinkapp.viewmodels.NfcDataViewModel;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -21,9 +24,12 @@ import java.util.ArrayList;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Scheduler;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -31,9 +37,13 @@ import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity implements MyDialog.DialogListener {
 
+    public static final String LIST = "list";
+    public static final String NOT_ALERT_DIALOG = "notAlertDialog";
+    public static final String DIALOG_TAG = "dialog";
     private APIService mAPIService;
     private String TAG = "MEDILINK TAG";
     private NfcTag nfc_tag;
+    ArrayList<String> listTasks;
 
     @BindView(R.id.et_employeeid)
     EditText employeeid;
@@ -47,10 +57,16 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
     @BindView(R.id.cb_out)
     CheckBox cbOut;
 
-    @BindView(R.id.et_nfc)
-    EditText nfc;
+    @BindView(R.id.tv_nfc)
+    TextView tvNfc;
+
+    @BindView(R.id.tv_tasks_string)
+    TextView tvTasks;
+
 
     private String nfc_id;
+
+    NfcDataViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +98,8 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
                 cbOut.setError(null);
             }
         });
+
+        viewModel = ViewModelProviders.of(this).get(NfcDataViewModel.class);
     }
 
     @Override
@@ -100,8 +118,8 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
             nfcData.setClientId(Integer.valueOf(clientid.getText().toString()));
             nfcData.setOfficeid(Integer.valueOf(officeid.getText().toString()));
             nfcData.setCalltype(cbIn.isChecked() ? MainActivity.this.getString(R.string.CALLTYPE_IN) : MainActivity.this.getString(R.string.CALLTYPE_OUT));
-            nfcData.setNfc(nfc.getText().toString());
-            nfcData.setTasktype("12|45|77");
+            nfcData.setNfc(tvNfc.getText().toString());
+            nfcData.setTasktype(new SupportUI().getFormatDataSendTasks(listTasks));
             nfcData.setAppSender(this.getString(R.string.android_sender));
 
             sendPost(nfcData);
@@ -113,17 +131,23 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
         MyDialog dialogFragment = new MyDialog();
 
         Bundle bundle = new Bundle();
-        bundle.putBoolean("notAlertDialog", true);
+        bundle.putBoolean(NOT_ALERT_DIALOG, true);
+        if (listTasks != null) {
+            bundle.putStringArrayList(LIST, listTasks);
+        }
         dialogFragment.setArguments(bundle);
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");
+        Fragment prev = getSupportFragmentManager().findFragmentByTag(DIALOG_TAG);
         if (prev != null) {
             ft.remove(prev);
         }
         ft.addToBackStack(null);
-        dialogFragment.show(ft, "dialog");
+        dialogFragment.show(ft, DIALOG_TAG);
     }
+
+
+
 
     private boolean validate() {
         if (!validateEmpty()) {
@@ -152,18 +176,29 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
     }
 
     private boolean validateEmpty() {
-        EditText[] editTexts = {employeeid, clientid, officeid, nfc};
+        EditText[] editTexts = {employeeid, clientid, officeid};
         boolean validate = true;
         for (EditText ed : editTexts) {
             if (TextUtils.isEmpty(ed.getText().toString().trim())) {
-                ed.setError("Field is empty!");
+                ed.setError(this.getString(R.string.field_is_empty));
                 validate = false;
             }
         }
+        if (TextUtils.isEmpty(tvTasks.getText().toString())) {
+            tvTasks.setError(this.getString(R.string.field_is_empty));
+            validate = false;
+        }
+
+        if (TextUtils.isEmpty(tvNfc.getText().toString())) {
+            tvNfc.setError(this.getString(R.string.field_is_empty));
+            tvNfc.setVisibility(View.VISIBLE);
+            findViewById(R.id.img_nfc_checked).setVisibility(View.GONE);
+            validate = false;
+        }
 
         if (!cbIn.isChecked() && !cbOut.isChecked()) {
-            cbIn.setError("In or Out should be select!");
-            cbOut.setError("In or Out should be select!");
+            cbIn.setError(this.getString(R.string.should_be_selected));
+            cbOut.setError(this.getString(R.string.should_be_selected));
             validate = false;
         }
         return validate;
@@ -230,7 +265,17 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
 
     @Override
     public void onFinishEditDialog(@NotNull ArrayList<String> list) {
-
+        listTasks = list;
+        if (!list.isEmpty()) {
+            String taskString = "";
+            for (String s : list) {
+                taskString = taskString + "," + s;
+            }
+            tvTasks.setText(taskString.substring(1, taskString.length()));
+            tvTasks.setError(null);
+        } else {
+            tvTasks.setText("");
+            tvTasks.setError(this.getString(R.string.field_is_empty));
+        }
     }
-
 }

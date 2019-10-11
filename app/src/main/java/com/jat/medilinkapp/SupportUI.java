@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -56,7 +57,7 @@ public class SupportUI {
     }
 
 
-    public  Dialog showProgress(MainActivity activity) {
+    public Dialog showProgress(MainActivity activity) {
         // custom dialog
         final Dialog dialogWF;
         dialogWF = new Dialog(activity, R.style.dialogStyle);
@@ -91,5 +92,16 @@ public class SupportUI {
                 }
             }
         });
+    }
+
+    public String getFormatDataSendTasks(ArrayList<String> list) {
+        if (list != null && !list.isEmpty()) {
+            String taskString = "";
+            for (String s : list) {
+                taskString = taskString + "|" + s;
+            }
+            return taskString.substring(1, taskString.length());
+        }
+        return "";
     }
 }
