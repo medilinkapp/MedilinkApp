@@ -2,31 +2,34 @@ package com.jat.medilinkapp.viewmodels;
 
 import android.app.Application;
 
-import com.jat.medilinkapp.model.MyDataBase;
-import com.jat.medilinkapp.model.NfcData;
+import com.jat.medilinkapp.model.NfcDataRepository;
+import com.jat.medilinkapp.model.databaseConf.MyDataBase;
+import com.jat.medilinkapp.model.entity.NfcData;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import io.reactivex.Observable;
+import rx.Subscriber;
 
 
 public class NfcDataHistoryViewModel extends AndroidViewModel {
 
-    private MyDataBase appDatabase;
+    NfcDataRepository nfcDataRepository;
 
-    public NfcDataHistoryViewModel(@NonNull Application application)     {
+    public NfcDataHistoryViewModel(@NonNull Application application) {
         super(application);
-        appDatabase = MyDataBase.getDatabase(application);
+        nfcDataRepository = new NfcDataRepository(application);
     }
 
     public Observable<List<NfcData>> getList() {
-        return appDatabase.nfcDataDao().getNfcDataList();
+        return  nfcDataRepository.getList();
     }
 
-    public long addData(NfcData modelClass) {
-        return appDatabase.nfcDataDao().addData(modelClass);
+    public Observable<Long> addData(NfcData modelClass) {
+        return   nfcDataRepository.addData(modelClass);
     }
+
 
 }

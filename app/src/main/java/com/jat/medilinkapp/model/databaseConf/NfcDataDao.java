@@ -1,4 +1,6 @@
-package com.jat.medilinkapp.model;
+package com.jat.medilinkapp.model.databaseConf;
+
+import com.jat.medilinkapp.model.entity.NfcData;
 
 import java.util.List;
 
@@ -15,6 +17,6 @@ public interface NfcDataDao {
     Observable<List<NfcData>> getNfcDataList();
 
     @Insert
-    long addData(NfcData nfcData);
+    Observable<Long> addData(NfcData nfcData);
 
 }

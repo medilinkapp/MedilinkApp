@@ -1,6 +1,6 @@
 package com.jat.medilinkapp.conf;
 
-import com.jat.medilinkapp.model.NfcData;
+import com.jat.medilinkapp.model.entity.NfcData;
 
 import retrofit2.http.Body;
 import retrofit2.http.POST;

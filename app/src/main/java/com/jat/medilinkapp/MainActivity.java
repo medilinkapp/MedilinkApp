@@ -7,13 +7,12 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.jat.medilinkapp.conf.APIService;
 import com.jat.medilinkapp.conf.ApiUtils;
-import com.jat.medilinkapp.model.NfcData;
+import com.jat.medilinkapp.model.entity.NfcData;
 import com.jat.medilinkapp.nfcconf.NfcTag;
 import com.jat.medilinkapp.viewmodels.NfcDataHistoryViewModel;
 
@@ -28,6 +27,7 @@ import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.disposables.CompositeDisposable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -68,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
 
     NfcDataHistoryViewModel viewModel;
 
+    private final CompositeDisposable disposables = new CompositeDisposable();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,29 +82,23 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
         nfc_tag = new NfcTag();
         nfc_tag.init(this);
 
-        cbIn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    cbOut.setChecked(false);
-                    layoutTask.setVisibility(View.GONE);
-                }
-
-                cbIn.setError(null);
-                cbOut.setError(null);
+        cbIn.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                cbOut.setChecked(false);
+                layoutTask.setVisibility(View.GONE);
             }
+
+            cbIn.setError(null);
+            cbOut.setError(null);
         });
 
-        cbOut.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    cbIn.setChecked(false);
-                    layoutTask.setVisibility(View.VISIBLE);
-                }
-                cbIn.setError(null);
-                cbOut.setError(null);
+        cbOut.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                cbIn.setChecked(false);
+                layoutTask.setVisibility(View.VISIBLE);
             }
+            cbIn.setError(null);
+            cbOut.setError(null);
         });
 
         viewModel = ViewModelProviders.of(this).get(NfcDataHistoryViewModel.class);
@@ -279,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
             for (String s : list) {
                 taskString = taskString + "," + s;
             }
-            tvTasks.setText(taskString.substring(1, taskString.length()));
+            tvTasks.setText(taskString.substring(1));
             tvTasks.setError(null);
         } else {
             tvTasks.setText("");

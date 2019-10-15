@@ -1,6 +1,8 @@
-package com.jat.medilinkapp.model;
+package com.jat.medilinkapp.model.databaseConf;
 
 import android.content.Context;
+
+import com.jat.medilinkapp.model.entity.NfcData;
 
 import androidx.room.Database;
 import androidx.room.Room;

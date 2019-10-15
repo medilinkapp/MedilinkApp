@@ -1,4 +1,4 @@
-package com.jat.medilinkapp.model;
+package com.jat.medilinkapp.model.entity;
 
 import java.text.DateFormat;
 import java.text.ParseException;

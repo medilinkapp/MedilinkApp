@@ -2,19 +2,16 @@ package com.jat.medilinkapp
 
 import android.app.Dialog
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.Button
-import android.widget.EditText
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jat.medilinkapp.adapters.NfcHistoryAdapter
-import com.jat.medilinkapp.model.NfcData
+import com.jat.medilinkapp.model.entity.NfcData
 
 
 class MyDialogHistory : DialogFragment() {

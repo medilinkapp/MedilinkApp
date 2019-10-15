@@ -1,0 +1,94 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "d1ed7efa2e92d071dd707a930dc9e96d",
+    "entities": [
+      {
+        "tableName": "NfcData",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `is_send` INTEGER NOT NULL, `created_date` TEXT, `calltype` TEXT, `client_id` INTEGER, `employee_id` INTEGER, `id` INTEGER, `nfc` TEXT, `office_id` INTEGER, `tasktype` TEXT, `app_sender` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "uid",
+            "columnName": "uid",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isSend",
+            "columnName": "is_send",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createDate",
+            "columnName": "created_date",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "calltype",
+            "columnName": "calltype",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "clientId",
+            "columnName": "client_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "employeeId",
+            "columnName": "employee_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "nfc",
+            "columnName": "nfc",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "officeid",
+            "columnName": "office_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "tasktype",
+            "columnName": "tasktype",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "appSender",
+            "columnName": "app_sender",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "uid"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd1ed7efa2e92d071dd707a930dc9e96d')"
+    ]
+  }
+}

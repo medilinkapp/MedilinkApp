@@ -1,4 +1,4 @@
-package com.jat.medilinkapp.model;
+package com.jat.medilinkapp.model.entity;
 
 import android.os.Parcel;
 import android.os.Parcelable;

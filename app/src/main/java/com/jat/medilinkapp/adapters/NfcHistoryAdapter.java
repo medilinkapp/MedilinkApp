@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.jat.medilinkapp.MyDialogHistory;
 import com.jat.medilinkapp.R;
-import com.jat.medilinkapp.model.NfcData;
+import com.jat.medilinkapp.model.entity.NfcData;
 
 import java.util.ArrayList;
 
