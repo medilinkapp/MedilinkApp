@@ -7,7 +7,7 @@ android {
     signingConfigs {
         config_release {
             Properties localProps = new Properties()
-            localProps.load(new FileInputStream(file('../local.properties')))
+            localProps.load(new FileInputStream(file('../local2.properties')))
             Properties keyProps = new Properties()
             assert localProps['keystore.props.file']
 
