@@ -20,7 +20,9 @@ import com.jat.medilinkapp.viewmodels.NfcDataHistoryViewModel;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -30,13 +32,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.internal.observers.BlockingBaseObserver;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity implements MyDialog.DialogListener {
+public class MainActivity extends AppCompatActivity implements MyDialog.DialogListener, MyDialogHistory.DialogListener {
 
     public static final String LIST = "list";
     public static final String NOT_ALERT_DIALOG = "notAlertDialog";
@@ -95,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
 
         sharePreferencesUtil = new SharePreferencesUtil(this);
         viewModel = ViewModelProviders.of(this).get(NfcDataHistoryViewModel.class);
+        //AsyncTask.execute(() -> viewModel.deleteAll());
         initUI();
     }
 
@@ -139,6 +141,10 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
             nfcData.setClientId(Integer.valueOf(clientid.getText().toString()));
             nfcData.setOfficeid(Integer.valueOf(officeid.getText().toString()));
             nfcData.setCalltype(cbIn.isChecked() ? MainActivity.this.getString(R.string.CALLTYPE_IN) : MainActivity.this.getString(R.string.CALLTYPE_OUT));
+
+            final String date = DateFormat.getDateTimeInstance().format(new Date());
+            nfcData.setCreateDate(date);
+
             nfcData.setNfc(tvNfc.getText().toString());
             nfcData.setTasktype(cbOut.isChecked() ? new SupportUI().getFormatDataSendTasks(listTasks) : "");
             nfcData.setAppSender(this.getString(R.string.android_sender));
@@ -153,9 +159,8 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
     }
 
     @OnClick(R.id.bt_history)
-    void showHitoryFragment() {
+    void showHistoryFragment() {
         MyDialogHistory dialogFragment = new MyDialogHistory();
-
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment prev = getSupportFragmentManager().findFragmentByTag(DIALOG_TAG_HISTORY);
         if (prev != null) {
@@ -227,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
             validate = false;
         }
 
-        if (TextUtils.isEmpty(tvNfc.getText().toString())) {
+        if (TextUtils.isEmpty(tvNfc.getText().toString()) && !BuildConfig.DEBUG) {
             tvNfc.setError(this.getString(R.string.field_is_empty));
             tvNfc.setVisibility(View.VISIBLE);
             findViewById(R.id.img_nfc_checked).setVisibility(View.GONE);
@@ -275,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
                         new SupportUI().showResponse(MainActivity.this, "Sent", "Data was sent.", true);
                         nfcData.setSend(true);
                         //add to the history
-                        AsyncTask.execute(() ->  viewModel.addData(nfcData));
+                        AsyncTask.execute(() -> viewModel.addData(nfcData));
 
                     }
 
@@ -285,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
                         new SupportUI().showResponse(MainActivity.this, "Error", e.getLocalizedMessage(), false);
                         nfcData.setSend(false);
                         //add to the history
-                        AsyncTask.execute(() ->  viewModel.addData(nfcData));
+                        AsyncTask.execute(() -> viewModel.addData(nfcData));
                     }
 
                     @Override
@@ -322,5 +327,21 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
             tvTasks.setText("");
             tvTasks.setError(this.getString(R.string.field_is_empty));
         }
+    }
+
+    @Override
+    public void onFinishSelectionData(@NotNull NfcData nfcData) {
+
+    }
+
+    @Override
+    public void onDeleteData() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                new SupportUI().showResponse(MainActivity.this, "Deleted", "Data was Deleted.", true);
+                ;
+            }
+        });
     }
 }

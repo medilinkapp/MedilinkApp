@@ -49,8 +49,11 @@ public class NfcHistoryAdapter extends RecyclerView.Adapter<NfcHistoryAdapter.Vi
 
         ImageView imgStatus = holder.imgSendStatus;
 
-
-
+        if(nfcData.isSend()){
+            imgStatus.setImageResource(R.drawable.ic_check_circle_nfc);
+        }else{
+            imgStatus.setImageResource(R.drawable.ic_error_red_42);
+        }
 
         holder.itemView.setOnClickListener((v -> {
             dialogListener.onFinishSelectionData(nfcData);

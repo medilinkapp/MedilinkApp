@@ -23,7 +23,6 @@ public class NfcData implements Parcelable {
 
     @ColumnInfo(name = "created_date")
     public String createDate;
-    //final String date = DateFormat.getDateInstance().format(new Date());
 
     @ColumnInfo(name = "calltype")
     @SerializedName("calltype")

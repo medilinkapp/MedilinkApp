@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jat.medilinkapp.adapters.TaskAdapter
 
-
 class MyDialog : DialogFragment() {
     var list = ArrayList<String>()
     val taskAdapter = TaskAdapter(list)

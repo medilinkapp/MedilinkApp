@@ -19,4 +19,7 @@ public interface NfcDataDao {
     @Insert
     long addData(NfcData nfcData);
 
+    @Query("DELETE FROM NfcData")
+    public void deleteAll();
+
 }

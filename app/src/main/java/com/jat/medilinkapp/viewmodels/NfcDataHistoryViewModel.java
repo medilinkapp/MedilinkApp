@@ -3,7 +3,6 @@ package com.jat.medilinkapp.viewmodels;
 import android.app.Application;
 
 import com.jat.medilinkapp.model.NfcDataRepository;
-import com.jat.medilinkapp.model.databaseConf.MyDataBase;
 import com.jat.medilinkapp.model.entity.NfcData;
 
 import java.util.List;
@@ -23,11 +22,15 @@ public class NfcDataHistoryViewModel extends AndroidViewModel {
     }
 
     public Observable<List<NfcData>> getList() {
-        return  nfcDataRepository.getList();
+        return nfcDataRepository.getList();
     }
 
     public Long addData(NfcData modelClass) {
         return nfcDataRepository.addData(modelClass);
+    }
+
+    public void deleteAll() {
+        nfcDataRepository.deleteAll();
     }
 
 
