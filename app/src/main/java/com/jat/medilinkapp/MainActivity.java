@@ -3,6 +3,7 @@ package com.jat.medilinkapp;
 import android.app.Dialog;
 import android.content.Intent;
 import android.nfc.NfcAdapter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.jat.medilinkapp.conf.APIService;
 import com.jat.medilinkapp.conf.ApiUtils;
 import com.jat.medilinkapp.model.entity.NfcData;
 import com.jat.medilinkapp.nfcconf.NfcTag;
+import com.jat.medilinkapp.util.SharePreferencesUtil;
 import com.jat.medilinkapp.viewmodels.NfcDataHistoryViewModel;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +30,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.internal.observers.BlockingBaseObserver;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -38,6 +41,10 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
     public static final String LIST = "list";
     public static final String NOT_ALERT_DIALOG = "notAlertDialog";
     public static final String DIALOG_TAG = "dialog";
+    public static final String DIALOG_TAG_HISTORY = "dialog_history";
+    public static final String EMPLOYEEID_PREFERENCE = "employeeid";
+    public static final String OFFICEID_PREFERENCE = "officeid";
+    public static final String CLIENTID_PREFERENCE = "clientid";
     private APIService mAPIService;
     private String TAG = "MEDILINK TAG";
     private NfcTag nfc_tag;
@@ -64,11 +71,15 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
     @BindView(R.id.layout_task)
     View layoutTask;
 
+    @BindView(R.id.bt_history)
+    View btHistory;
+
     private String nfc_id;
 
     NfcDataHistoryViewModel viewModel;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
+    private SharePreferencesUtil sharePreferencesUtil;
 
 
     @Override
@@ -82,6 +93,12 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
         nfc_tag = new NfcTag();
         nfc_tag.init(this);
 
+        sharePreferencesUtil = new SharePreferencesUtil(this);
+        viewModel = ViewModelProviders.of(this).get(NfcDataHistoryViewModel.class);
+        initUI();
+    }
+
+    private void initUI() {
         cbIn.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 cbOut.setChecked(false);
@@ -101,7 +118,9 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
             cbOut.setError(null);
         });
 
-        viewModel = ViewModelProviders.of(this).get(NfcDataHistoryViewModel.class);
+        employeeid.setText(sharePreferencesUtil.getValue(EMPLOYEEID_PREFERENCE, ""));
+        clientid.setText(sharePreferencesUtil.getValue(CLIENTID_PREFERENCE, ""));
+        officeid.setText(sharePreferencesUtil.getValue(OFFICEID_PREFERENCE, ""));
     }
 
     @Override
@@ -125,7 +144,25 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
             nfcData.setAppSender(this.getString(R.string.android_sender));
 
             sendPost(nfcData);
+
+            //saving values for next time show defaults
+            sharePreferencesUtil.setValue(EMPLOYEEID_PREFERENCE, String.valueOf(nfcData.getEmployeeId()));
+            sharePreferencesUtil.setValue(OFFICEID_PREFERENCE, String.valueOf(nfcData.getOfficeid()));
+            sharePreferencesUtil.setValue(CLIENTID_PREFERENCE, String.valueOf(nfcData.getClientId()));
         }
+    }
+
+    @OnClick(R.id.bt_history)
+    void showHitoryFragment() {
+        MyDialogHistory dialogFragment = new MyDialogHistory();
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag(DIALOG_TAG_HISTORY);
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+        dialogFragment.show(ft, DIALOG_TAG);
     }
 
     @OnClick(R.id.bt_add_tasks)
@@ -237,7 +274,9 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
                         progress.dismiss();
                         new SupportUI().showResponse(MainActivity.this, "Sent", "Data was sent.", true);
                         nfcData.setSend(true);
-                        viewModel.addData(nfcData);
+                        //add to the history
+                        AsyncTask.execute(() ->  viewModel.addData(nfcData));
+
                     }
 
                     @Override
@@ -245,7 +284,8 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
                         progress.dismiss();
                         new SupportUI().showResponse(MainActivity.this, "Error", e.getLocalizedMessage(), false);
                         nfcData.setSend(false);
-                        viewModel.addData(nfcData);
+                        //add to the history
+                        AsyncTask.execute(() ->  viewModel.addData(nfcData));
                     }
 
                     @Override

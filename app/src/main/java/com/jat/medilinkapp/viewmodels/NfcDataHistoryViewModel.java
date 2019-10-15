@@ -11,7 +11,6 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import io.reactivex.Observable;
-import rx.Subscriber;
 
 
 public class NfcDataHistoryViewModel extends AndroidViewModel {
@@ -27,8 +26,8 @@ public class NfcDataHistoryViewModel extends AndroidViewModel {
         return  nfcDataRepository.getList();
     }
 
-    public Observable<Long> addData(NfcData modelClass) {
-        return   nfcDataRepository.addData(modelClass);
+    public Long addData(NfcData modelClass) {
+        return nfcDataRepository.addData(modelClass);
     }
 
 

@@ -17,6 +17,6 @@ public interface NfcDataDao {
     Observable<List<NfcData>> getNfcDataList();
 
     @Insert
-    Observable<Long> addData(NfcData nfcData);
+    long addData(NfcData nfcData);
 
 }

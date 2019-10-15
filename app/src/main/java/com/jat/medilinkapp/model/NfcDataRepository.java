@@ -1,6 +1,7 @@
 package com.jat.medilinkapp.model;
 
 import android.app.Application;
+import android.os.AsyncTask;
 
 import com.jat.medilinkapp.model.databaseConf.MyDataBase;
 import com.jat.medilinkapp.model.entity.NfcData;
@@ -9,6 +10,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import io.reactivex.Observable;
+import rx.Subscriber;
 
 public class NfcDataRepository {
 
@@ -22,8 +24,8 @@ public class NfcDataRepository {
         return appDatabase.nfcDataDao().getNfcDataList();
     }
 
-    public Observable<Long> addData(NfcData modelClass) {
-        return appDatabase.nfcDataDao().addData(modelClass);
+    public Long addData(NfcData modelClass) {
+        return  appDatabase.nfcDataDao().addData(modelClass);
     }
 
 }
