@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.sql.Timestamp;
+import java.util.Objects;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -21,8 +21,9 @@ public class NfcData implements Parcelable {
     @ColumnInfo(name = "is_send")
     private boolean isSend;
 
-    @ColumnInfo(name = "timestamp")
-    private Timestamp timestamp;
+    @ColumnInfo(name = "created_date")
+    public String createDate;
+    //final String date = DateFormat.getDateInstance().format(new Date());
 
     @ColumnInfo(name = "calltype")
     @SerializedName("calltype")
@@ -78,14 +79,6 @@ public class NfcData implements Parcelable {
 
     public void setSend(boolean send) {
         isSend = send;
-    }
-
-    public Timestamp getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Timestamp timestamp) {
-        this.timestamp = timestamp;
     }
 
     public String getCalltype() {
@@ -152,6 +145,41 @@ public class NfcData implements Parcelable {
         this.appSender = appSender;
     }
 
+    public String getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
+    }
+
+    public NfcData() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof NfcData)) return false;
+        NfcData nfcData = (NfcData) o;
+        return getUid() == nfcData.getUid() &&
+                isSend() == nfcData.isSend() &&
+                Objects.equals(createDate, nfcData.createDate) &&
+                Objects.equals(getCalltype(), nfcData.getCalltype()) &&
+                Objects.equals(getClientId(), nfcData.getClientId()) &&
+                Objects.equals(getEmployeeId(), nfcData.getEmployeeId()) &&
+                Objects.equals(getId(), nfcData.getId()) &&
+                Objects.equals(getNfc(), nfcData.getNfc()) &&
+                Objects.equals(getOfficeid(), nfcData.getOfficeid()) &&
+                Objects.equals(getTasktype(), nfcData.getTasktype()) &&
+                Objects.equals(getAppSender(), nfcData.getAppSender());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUid(), isSend(), createDate, getCalltype(), getClientId(), getEmployeeId(), getId(), getNfc(), getOfficeid(), getTasktype(), getAppSender());
+    }
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -161,7 +189,7 @@ public class NfcData implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.uid);
         dest.writeByte(this.isSend ? (byte) 1 : (byte) 0);
-        dest.writeSerializable(this.timestamp);
+        dest.writeString(this.createDate);
         dest.writeString(this.calltype);
         dest.writeValue(this.clientId);
         dest.writeValue(this.employeeId);
@@ -172,13 +200,10 @@ public class NfcData implements Parcelable {
         dest.writeString(this.appSender);
     }
 
-    public NfcData() {
-    }
-
     protected NfcData(Parcel in) {
         this.uid = in.readInt();
         this.isSend = in.readByte() != 0;
-        this.timestamp = (Timestamp) in.readSerializable();
+        this.createDate = in.readString();
         this.calltype = in.readString();
         this.clientId = (Integer) in.readValue(Integer.class.getClassLoader());
         this.employeeId = (Integer) in.readValue(Integer.class.getClassLoader());
@@ -189,7 +214,7 @@ public class NfcData implements Parcelable {
         this.appSender = in.readString();
     }
 
-    public static final Parcelable.Creator<NfcData> CREATOR = new Parcelable.Creator<NfcData>() {
+    public static final Creator<NfcData> CREATOR = new Creator<NfcData>() {
         @Override
         public NfcData createFromParcel(Parcel source) {
             return new NfcData(source);

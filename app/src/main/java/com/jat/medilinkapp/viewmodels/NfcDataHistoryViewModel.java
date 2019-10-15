@@ -9,14 +9,14 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import rx.Observable;
+import io.reactivex.Observable;
 
 
-public class NfcDataViewModel extends AndroidViewModel {
+public class NfcDataHistoryViewModel extends AndroidViewModel {
 
     private MyDataBase appDatabase;
 
-    public NfcDataViewModel(@NonNull Application application)     {
+    public NfcDataHistoryViewModel(@NonNull Application application)     {
         super(application);
         appDatabase = MyDataBase.getDatabase(application);
     }

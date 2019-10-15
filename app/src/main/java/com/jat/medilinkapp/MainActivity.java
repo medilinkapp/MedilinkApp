@@ -15,7 +15,7 @@ import com.jat.medilinkapp.conf.APIService;
 import com.jat.medilinkapp.conf.ApiUtils;
 import com.jat.medilinkapp.model.NfcData;
 import com.jat.medilinkapp.nfcconf.NfcTag;
-import com.jat.medilinkapp.viewmodels.NfcDataViewModel;
+import com.jat.medilinkapp.viewmodels.NfcDataHistoryViewModel;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -24,12 +24,10 @@ import java.util.ArrayList;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.Scheduler;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -63,10 +61,12 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
     @BindView(R.id.tv_tasks_string)
     TextView tvTasks;
 
+    @BindView(R.id.layout_task)
+    View layoutTask;
 
     private String nfc_id;
 
-    NfcDataViewModel viewModel;
+    NfcDataHistoryViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,8 +82,11 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
         cbIn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked)
+                if (isChecked) {
                     cbOut.setChecked(false);
+                    layoutTask.setVisibility(View.GONE);
+                }
+
                 cbIn.setError(null);
                 cbOut.setError(null);
             }
@@ -92,14 +95,16 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
         cbOut.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked)
+                if (isChecked) {
                     cbIn.setChecked(false);
+                    layoutTask.setVisibility(View.VISIBLE);
+                }
                 cbIn.setError(null);
                 cbOut.setError(null);
             }
         });
 
-        viewModel = ViewModelProviders.of(this).get(NfcDataViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(NfcDataHistoryViewModel.class);
     }
 
     @Override
@@ -119,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
             nfcData.setOfficeid(Integer.valueOf(officeid.getText().toString()));
             nfcData.setCalltype(cbIn.isChecked() ? MainActivity.this.getString(R.string.CALLTYPE_IN) : MainActivity.this.getString(R.string.CALLTYPE_OUT));
             nfcData.setNfc(tvNfc.getText().toString());
-            nfcData.setTasktype(new SupportUI().getFormatDataSendTasks(listTasks));
+            nfcData.setTasktype(cbOut.isChecked()?new SupportUI().getFormatDataSendTasks(listTasks):"");
             nfcData.setAppSender(this.getString(R.string.android_sender));
 
             sendPost(nfcData);
@@ -147,17 +152,16 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
     }
 
 
-
-
     private boolean validate() {
+        boolean validate = true;
         if (!validateEmpty()) {
-            return false;
+            validate = false;
         }
 
         if (!isValidateLength()) {
-            return false;
+            validate = false;
         }
-        return true;
+        return validate;
     }
 
     private boolean isValidateLength() {
@@ -184,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
                 validate = false;
             }
         }
-        if (TextUtils.isEmpty(tvTasks.getText().toString())) {
+        if (TextUtils.isEmpty(tvTasks.getText().toString()) && cbOut.isChecked()) {
             tvTasks.setError(this.getString(R.string.field_is_empty));
             validate = false;
         }
@@ -205,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
     }
 
     private void sendPost(NfcData nfcData) {
+        //check is there is intenet connection
         new SupportUI().checkInternetConnetion().subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Boolean>() {

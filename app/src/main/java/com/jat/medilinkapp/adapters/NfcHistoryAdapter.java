@@ -45,7 +45,7 @@ public class NfcHistoryAdapter extends RecyclerView.Adapter<NfcHistoryAdapter.Vi
         NfcData nfcData = list.get(position);
 
         TextView tvNfcTimeStamp = holder.tvNfcTimeStamp;
-        tvNfcTimeStamp.setText(nfcData.getTimestamp().toString());
+        tvNfcTimeStamp.setText(nfcData.getCreateDate());
 
         ImageView imgStatus = holder.imgSendStatus;
 
