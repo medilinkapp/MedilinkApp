@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
             nfcData.setOfficeid(Integer.valueOf(officeid.getText().toString()));
             nfcData.setCalltype(cbIn.isChecked() ? MainActivity.this.getString(R.string.CALLTYPE_IN) : MainActivity.this.getString(R.string.CALLTYPE_OUT));
             nfcData.setNfc(tvNfc.getText().toString());
-            nfcData.setTasktype(cbOut.isChecked()?new SupportUI().getFormatDataSendTasks(listTasks):"");
+            nfcData.setTasktype(cbOut.isChecked() ? new SupportUI().getFormatDataSendTasks(listTasks) : "");
             nfcData.setAppSender(this.getString(R.string.android_sender));
 
             sendPost(nfcData);
@@ -238,14 +238,17 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
                     @Override
                     public void onCompleted() {
                         progress.dismiss();
-                        new SupportUI().showResponse(MainActivity.this, "Sent", "Data was sent.", true)
-                        ;
+                        new SupportUI().showResponse(MainActivity.this, "Sent", "Data was sent.", true);
+                        nfcData.setSend(true);
+                        viewModel.addData(nfcData);
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         progress.dismiss();
                         new SupportUI().showResponse(MainActivity.this, "Error", e.getLocalizedMessage(), false);
+                        nfcData.setSend(false);
+                        viewModel.addData(nfcData);
                     }
 
                     @Override

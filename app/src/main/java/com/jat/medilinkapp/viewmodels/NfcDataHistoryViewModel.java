@@ -25,7 +25,7 @@ public class NfcDataHistoryViewModel extends AndroidViewModel {
         return appDatabase.nfcDataDao().getNfcDataList();
     }
 
-    long addData(NfcData modelClass) {
+    public long addData(NfcData modelClass) {
         return appDatabase.nfcDataDao().addData(modelClass);
     }
 

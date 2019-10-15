@@ -3,6 +3,10 @@ package com.jat.medilinkapp;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.microsoft.appcenter.AppCenter;
+import com.microsoft.appcenter.analytics.Analytics;
+import com.microsoft.appcenter.crashes.Crashes;
+
 import androidx.appcompat.app.AppCompatActivity;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -18,6 +22,8 @@ public class Welcome extends AppCompatActivity {
         setContentView(R.layout.activity_welcome);
 
         unbinder = ButterKnife.bind(this);
+        AppCenter.start(getApplication(), "e219356b-48da-4271-a40c-0609d2a9c4f3",
+                Analytics.class, Crashes.class);
 
     }
 
