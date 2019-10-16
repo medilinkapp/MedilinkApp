@@ -79,6 +79,8 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
 
     NfcDataHistoryViewModel viewModel;
 
+    MyDialogHistory myDialogHistory;
+
     private final CompositeDisposable disposables = new CompositeDisposable();
     private SharePreferencesUtil sharePreferencesUtil;
 
@@ -160,14 +162,14 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
 
     @OnClick(R.id.bt_history)
     void showHistoryFragment() {
-        MyDialogHistory dialogFragment = new MyDialogHistory();
+        myDialogHistory = new MyDialogHistory();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment prev = getSupportFragmentManager().findFragmentByTag(DIALOG_TAG_HISTORY);
         if (prev != null) {
             ft.remove(prev);
         }
         ft.addToBackStack(null);
-        dialogFragment.show(ft, DIALOG_TAG);
+        myDialogHistory.show(ft, DIALOG_TAG);
     }
 
     @OnClick(R.id.bt_add_tasks)
@@ -331,7 +333,33 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
 
     @Override
     public void onFinishSelectionData(@NotNull NfcData nfcData) {
+        if (!nfcData.isSend()) {
+            new SupportUI().showResentDialog(this, () -> {
+                if (myDialogHistory != null) {
+                    myDialogHistory.dismiss();
+                }
 
+                employeeid.setText(String.valueOf(nfcData.getEmployeeId()));
+                clientid.setText(String.valueOf(nfcData.getClientId()));
+                officeid.setText(String.valueOf(nfcData.getOfficeid()));
+
+                if (nfcData.getCalltype().equals(MainActivity.this.getString(R.string.CALLTYPE_IN))) {
+                    cbIn.setChecked(true);
+                } else {
+                    cbOut.setChecked(true);
+                    tvTasks.setText(nfcData.getTasktype().replace("|", ","));
+                    if (!TextUtils.isEmpty(nfcData.getTasktype())) {
+                        listTasks = new ArrayList<>();
+                        for (String task : nfcData.getTasktype().split("\\|")) {
+                            listTasks.add(task);
+                        }
+                    }
+                }
+                tvNfc.setText("");
+
+                new SupportUI().showDialogInfo(MainActivity.this, "Data recovered ","Please scan your card again and process to send.");
+            }, nfcData);
+        }
     }
 
     @Override

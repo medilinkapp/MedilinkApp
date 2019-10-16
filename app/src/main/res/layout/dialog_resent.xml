@@ -1,0 +1,263 @@
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_layout"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/indent_large"
+        android:paddingBottom="22dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/indent_large"
+                android:gravity="start"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imgcharater"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:adjustViewBounds="true"
+                    android:src="@mipmap/ic_launcher" />
+
+                <TextView
+                    android:id="@+id/tv_title_layout"
+                    style="@style/TextAppearance.AppCompat.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/app_name"
+                    android:textColor="@color/blue_donation"
+                    android:textSize="34sp"
+                    android:textStyle="bold"
+                    android:typeface="normal"
+                    app:fontFamily="sans-serif-smallcaps" />
+            </LinearLayout>
+
+            <View style="@style/separate_line" />
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/linearLayout3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <View
+                android:id="@+id/view8"
+                style="@style/separate_line"
+                android:layout_width="5dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="@string/label_date_time"
+                android:textColor="@color/Black"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
+            <TextView
+                android:id="@+id/tv_date_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="71dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="72dp"
+                android:fontFamily="sans-serif-smallcaps"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView11"
+                tools:text="October 10 2019 5:10:03" />
+
+            <TextView
+                android:id="@+id/tv_title_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:fontFamily="sans-serif-smallcaps"
+                android:gravity="center"
+                android:text="@string/label_employee"
+                android:textAlignment="center"
+                android:textColor="@color/Black"
+                android:textSize="24sp"
+                app:fontFamily="sans-serif-smallcaps"
+                app:layout_constraintEnd_toStartOf="@+id/view8"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_msg_dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:fontFamily="sans-serif-smallcaps"
+                android:gravity="center"
+                android:text="@string/label_client"
+                android:textAlignment="center"
+                android:textColor="@color/Black"
+                android:textSize="24sp"
+                app:fontFamily="sans-serif-smallcaps"
+                app:layout_constraintEnd_toStartOf="@+id/view8"
+                app:layout_constraintTop_toBottomOf="@+id/tv_title_message" />
+
+
+            <TextView
+                android:id="@+id/tv_employee"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="sans-serif-smallcaps"
+                android:textSize="24sp"
+                app:layout_constraintStart_toEndOf="@+id/view8"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="9999" />
+
+            <TextView
+                android:id="@+id/tv_client"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="sans-serif-smallcaps"
+                android:textSize="24sp"
+                app:layout_constraintStart_toEndOf="@+id/view8"
+                app:layout_constraintTop_toBottomOf="@+id/tv_employee"
+                tools:text="99" />
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="@string/label_office"
+                android:textColor="@color/Black"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toStartOf="@+id/view8"
+                app:layout_constraintTop_toBottomOf="@+id/tv_msg_dialog" />
+
+            <TextView
+                android:id="@+id/tv_office"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="sans-serif-smallcaps"
+                android:textSize="24sp"
+                app:layout_constraintStart_toEndOf="@+id/view8"
+                app:layout_constraintTop_toBottomOf="@+id/tv_client"
+                tools:text="12" />
+
+            <TextView
+                android:id="@+id/tv_label_tasks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="@string/label_tasks"
+                android:textColor="@color/Black"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toStartOf="@+id/view8"
+                app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+            <TextView
+                android:id="@+id/tv_tasks"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="sans-serif-smallcaps"
+                android:maxLines="4"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/view8"
+                app:layout_constraintTop_toBottomOf="@+id/tv_office"
+                tools:text="99,99,99,99" />
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="@string/label_in_out"
+                android:textColor="@color/Black"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toStartOf="@+id/view8"
+                app:layout_constraintTop_toBottomOf="@+id/tv_tasks" />
+
+            <TextView
+                android:id="@+id/tv_in_out"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="sans-serif-smallcaps"
+                android:textSize="24sp"
+                app:layout_constraintStart_toEndOf="@+id/view8"
+                app:layout_constraintTop_toBottomOf="@+id/tv_tasks"
+                tools:text="IN" />
+
+            <Button
+                android:id="@+id/bt_cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="@android:string/cancel"
+                app:layout_constraintEnd_toStartOf="@+id/view8"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_date_time" />
+
+            <Button
+                android:id="@+id/bt_resend"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/bt_label_resend"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/view8"
+                app:layout_constraintTop_toBottomOf="@+id/tv_date_time" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

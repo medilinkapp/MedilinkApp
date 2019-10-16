@@ -3,10 +3,14 @@ package com.jat.medilinkapp;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.view.Gravity;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.jat.medilinkapp.model.entity.NfcData;
+import com.jat.medilinkapp.util.ISingleActionCallBack;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -15,6 +19,10 @@ import rx.Observable;
 import rx.Subscriber;
 
 public class SupportUI {
+
+
+    public static final String IN = "In";
+    public static final String OUT = "Out";
 
     public void showResponse(MainActivity activity, String titleMsg, String message, boolean success) {
         // custom dialog
@@ -104,4 +112,86 @@ public class SupportUI {
         }
         return "";
     }
+
+
+    public void showResentDialog(MainActivity activity, ISingleActionCallBack iSingleActionCallBack, NfcData nfcData) {
+        // custom dialog
+        final Dialog dialogWF;
+        dialogWF = new Dialog(activity, R.style.dialogStyle);
+        dialogWF.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogWF.setContentView(R.layout.dialog_resent);
+        dialogWF.setCanceledOnTouchOutside(false);
+        dialogWF.setCancelable(false);
+        // Setting dialogview
+        Window window = dialogWF.getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+        wlp.gravity = Gravity.CENTER;
+        // wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        window.setAttributes(wlp);
+
+        TextView tvEmployee = dialogWF.findViewById(R.id.tv_employee);
+        TextView tvClient = dialogWF.findViewById(R.id.tv_client);
+        TextView tvOffice = dialogWF.findViewById(R.id.tv_office);
+        TextView tvInOut = dialogWF.findViewById(R.id.tv_in_out);
+        TextView tvTasks = dialogWF.findViewById(R.id.tv_tasks);
+        TextView tvDate_time = dialogWF.findViewById(R.id.tv_date_time);
+
+        tvEmployee.setText(String.valueOf(nfcData.getEmployeeId()));
+        tvClient.setText(String.valueOf(nfcData.getClientId()));
+        tvOffice.setText(String.valueOf(nfcData.getOfficeid()));
+        tvInOut.setText(nfcData.getCalltype().equals(activity.getString(R.string.CALLTYPE_IN)) ? IN : OUT);
+        if (nfcData.getCalltype().equals("I")) {
+            dialogWF.findViewById(R.id.tv_label_tasks).setVisibility(View.GONE);
+            tvTasks.setVisibility(View.GONE);
+        } else {
+            tvTasks.setText(nfcData.getTasktype().replace("|", ","));
+        }
+
+        tvDate_time.setText(nfcData.getCreateDate());
+
+        Button btResend = dialogWF.findViewById(R.id.bt_resend);
+        btResend.setOnClickListener(v -> {
+            dialogWF.dismiss();
+            iSingleActionCallBack.callBack();
+        });
+
+        Button btCancel = dialogWF.findViewById(R.id.bt_cancel);
+        btCancel.setOnClickListener(v -> {
+            dialogWF.dismiss();
+        });
+
+        dialogWF.show();
+    }
+
+
+    public void showDialogInfo(MainActivity activity, String titleMsg, String message) {
+        // custom dialog
+        final Dialog dialogWF;
+        dialogWF = new Dialog(activity, R.style.dialogStyle);
+        dialogWF.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogWF.setContentView(R.layout.dialog_info);
+        dialogWF.setCanceledOnTouchOutside(false);
+        dialogWF.setCancelable(false);
+        // Setting dialogview
+        Window window = dialogWF.getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+        wlp.gravity = Gravity.CENTER;
+        // wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        window.setAttributes(wlp);
+
+        TextView tvTitle = dialogWF.findViewById(R.id.tv_title_layout);
+        TextView tvTitleMessage = dialogWF.findViewById(R.id.tv_title_message);
+        TextView tvMsgDialog = dialogWF.findViewById(R.id.tv_msg_dialog);
+        Button btOK = dialogWF.findViewById(R.id.bt_ok);
+
+        tvTitleMessage.setText(titleMsg);
+        tvMsgDialog.setText(message);
+
+        btOK.setOnClickListener(v -> {
+            dialogWF.dismiss();
+        });
+        dialogWF.show();
+    }
+
+
 }

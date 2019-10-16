@@ -1,8 +1,17 @@
 <resources>
-    <string name="app_name">MedilinkApp</string>
+    <string name="app_name">Medilink</string>
     <string name="android_sender">Android Medilink</string>
     <string name="CALLTYPE_IN">I</string>
     <string name="CALLTYPE_OUT">O</string>
     <string name="field_is_empty">Field is empty!</string>
     <string name="should_be_selected">In or Out should be select!</string>
+
+
+    <string name="label_employee">Employee</string>
+    <string name="label_client">Client</string>
+    <string name="label_office">Office</string>
+    <string name="label_tasks">Tasks</string>
+    <string name="label_in_out">IN/OUT</string>
+    <string name="label_date_time">Date/Time</string>
+    <string name="bt_label_resend">resend</string>
 </resources>
