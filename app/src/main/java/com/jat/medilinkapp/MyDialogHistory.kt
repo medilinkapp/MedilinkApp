@@ -31,11 +31,7 @@ class MyDialogHistory : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        disposables.add(viewModel!!.list.subscribeOn(io.reactivex.schedulers.Schedulers.io())
-                .observeOn(io.reactivex.schedulers.Schedulers.trampoline())
-                .subscribe(Consumer { list ->
-                    nfcHistoryAdapter = NfcHistoryAdapter(ArrayList(list), activity as MyDialogHistory.DialogListener)
-                }));
+
         return super.onCreateDialog(savedInstanceState)
     }
 
@@ -66,12 +62,22 @@ class MyDialogHistory : DialogFragment() {
         })
 
 
-
-
         dialog.setCanceledOnTouchOutside(false)
+
+        disposables.add(viewModel!!.list.subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(io.reactivex.schedulers.Schedulers.trampoline())
+                .subscribe(Consumer { list ->
+                    nfcHistoryAdapter!!.setList(ArrayList(list));
+                    nfcHistoryAdapter!!.notifyDataSetChanged();
+
+                }));
+
+        nfcHistoryAdapter = NfcHistoryAdapter(ArrayList(), activity as MyDialogHistory.DialogListener)
         with(viewDialog.findViewById(com.jat.medilinkapp.R.id.rv_tasks) as RecyclerView) {
             adapter = nfcHistoryAdapter
-            layoutManager = LinearLayoutManager(activity)
+            val linearLayoutManager = LinearLayoutManager(activity);
+            linearLayoutManager.reverseLayout = true;
+            layoutManager = linearLayoutManager
         }
 
     }

@@ -15,7 +15,7 @@ public abstract class MyDataBase extends RoomDatabase {
 
     public static MyDataBase getDatabase(Context context) {
         if (instance == null) {
-            instance = Room.databaseBuilder(context, MyDataBase.class, "NFCDB").build();
+            instance = Room.databaseBuilder(context, MyDataBase.class, "NFCDB").allowMainThreadQueries().build();
         }
         return instance;
     }

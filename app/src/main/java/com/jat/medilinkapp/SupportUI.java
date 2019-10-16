@@ -2,6 +2,7 @@ package com.jat.medilinkapp;
 
 import android.app.Dialog;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -13,7 +14,11 @@ import com.jat.medilinkapp.model.entity.NfcData;
 import com.jat.medilinkapp.util.ISingleActionCallBack;
 
 import java.net.InetAddress;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -23,6 +28,7 @@ public class SupportUI {
 
     public static final String IN = "In";
     public static final String OUT = "Out";
+    public static final DateFormat DATE_TIME_INSTANCE = DateFormat.getDateTimeInstance();
 
     public void showResponse(MainActivity activity, String titleMsg, String message, boolean success) {
         // custom dialog
@@ -191,6 +197,26 @@ public class SupportUI {
             dialogWF.dismiss();
         });
         dialogWF.show();
+    }
+
+    public Date fromStringToDate(String sDate) {
+        try {
+            Date d = DATE_TIME_INSTANCE.parse(sDate);
+            return d;
+        } catch (ParseException ex) {
+            Log.v("Exception", ex.getLocalizedMessage());
+        }
+        return null;
+    }
+
+    public String fromDateToString(Date date) {
+        return DATE_TIME_INSTANCE.format(new Date());
+    }
+
+    public long diffMinutesDateTimes(Date dateStart, Date dateEnd) {
+        long diffInMillisec = dateEnd.getTime() - dateStart.getTime();
+        long diffInMin = TimeUnit.MILLISECONDS.toMinutes(diffInMillisec);
+        return diffInMin;
     }
 
 

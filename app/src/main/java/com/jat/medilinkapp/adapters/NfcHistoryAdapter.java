@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.jat.medilinkapp.BuildConfig;
 import com.jat.medilinkapp.MyDialogHistory;
 import com.jat.medilinkapp.R;
 import com.jat.medilinkapp.model.entity.NfcData;
@@ -18,6 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class NfcHistoryAdapter extends RecyclerView.Adapter<NfcHistoryAdapter.ViewHolderNfcData> {
 
+    public static final String IN = "In";
+    public static final String OUT = "Out";
+    public static final String I = "I";
     ArrayList<NfcData> list;
     MyDialogHistory.DialogListener dialogListener;
 
@@ -45,13 +49,17 @@ public class NfcHistoryAdapter extends RecyclerView.Adapter<NfcHistoryAdapter.Vi
         NfcData nfcData = list.get(position);
 
         TextView tvNfcTimeStamp = holder.tvNfcTimeStamp;
-        tvNfcTimeStamp.setText(nfcData.getCreateDate());
+        if (BuildConfig.DEBUG) {
+            tvNfcTimeStamp.setText(nfcData.getUid() + " - " + nfcData.getCreateDate());
+        } else {
+            tvNfcTimeStamp.setText(nfcData.getCalltype().equals(I) ? IN : OUT + " - " + nfcData.getCreateDate());
+        }
 
         ImageView imgStatus = holder.imgSendStatus;
 
-        if(nfcData.isSend()){
+        if (nfcData.isSend()) {
             imgStatus.setImageResource(R.drawable.ic_check_circle_nfc);
-        }else{
+        } else {
             imgStatus.setImageResource(R.drawable.ic_error_red_42);
         }
 

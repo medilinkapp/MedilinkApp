@@ -25,6 +25,10 @@ public class NfcDataHistoryViewModel extends AndroidViewModel {
         return nfcDataRepository.getList();
     }
 
+    public Observable<List<NfcData>> getListBySubCreateData(String subDate) {
+        return nfcDataRepository.getListBySubCreateData(subDate);
+    }
+
     public Long addData(NfcData modelClass) {
         return nfcDataRepository.addData(modelClass);
     }
@@ -33,5 +37,7 @@ public class NfcDataHistoryViewModel extends AndroidViewModel {
         nfcDataRepository.deleteAll();
     }
 
-
+    public void delete(NfcData nfcData) {
+        nfcDataRepository.delete(nfcData);
+    }
 }

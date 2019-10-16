@@ -15,7 +15,7 @@ import com.jat.medilinkapp.MainActivity;
 import com.jat.medilinkapp.R;
 
 
-public class NfcTag {
+public class NfcTagHandler {
 
     private TextView nfc_text;
 
@@ -25,7 +25,7 @@ public class NfcTag {
     private IntentFilter[] write_tag_filters;
     private static final String TAG = "MEDILINK";
 
-    public NfcTag() {
+    public NfcTagHandler() {
     }
 
     public void init(MainActivity activity) {
@@ -170,7 +170,7 @@ public class NfcTag {
         nfc_checked_img.setVisibility(View.GONE);
     }
 
-    private void showCheckedNfc(String id) {
+    public void showCheckedNfc(String id) {
         nfc_text.setText(id);
         nfc_text.setVisibility(View.INVISIBLE);
         nfc_checked_img.setVisibility(View.VISIBLE);

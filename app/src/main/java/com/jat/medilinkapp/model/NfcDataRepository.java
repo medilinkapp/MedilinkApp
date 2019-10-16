@@ -22,6 +22,10 @@ public class NfcDataRepository {
         return appDatabase.nfcDataDao().getNfcDataList();
     }
 
+    public Observable<List<NfcData>> getListBySubCreateData(String subDate) {
+        return appDatabase.nfcDataDao().getListBySubCreateData(subDate);
+    }
+
     public Long addData(NfcData modelClass) {
         return appDatabase.nfcDataDao().addData(modelClass);
     }
@@ -29,5 +33,10 @@ public class NfcDataRepository {
     public void deleteAll() {
         appDatabase.nfcDataDao().deleteAll();
     }
+
+    public void delete(NfcData nfcData) {
+        appDatabase.nfcDataDao().delete(nfcData);
+    }
+
 
 }

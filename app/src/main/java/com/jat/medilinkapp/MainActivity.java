@@ -14,15 +14,15 @@ import android.widget.TextView;
 import com.jat.medilinkapp.conf.APIService;
 import com.jat.medilinkapp.conf.ApiUtils;
 import com.jat.medilinkapp.model.entity.NfcData;
-import com.jat.medilinkapp.nfcconf.NfcTag;
+import com.jat.medilinkapp.nfcconf.NfcTagHandler;
 import com.jat.medilinkapp.util.SharePreferencesUtil;
 import com.jat.medilinkapp.viewmodels.NfcDataHistoryViewModel;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -32,6 +32,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.internal.observers.BlockingBaseObserver;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -46,9 +49,10 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
     public static final String EMPLOYEEID_PREFERENCE = "employeeid";
     public static final String OFFICEID_PREFERENCE = "officeid";
     public static final String CLIENTID_PREFERENCE = "clientid";
+    public static final int MINUTES_WAIT_TO_SEND_AGAIN = 5;
     private APIService mAPIService;
     private String TAG = "MEDILINK TAG";
-    private NfcTag nfc_tag;
+    private NfcTagHandler nfcTagHandler;
     ArrayList<String> listTasks;
 
     @BindView(R.id.et_employeeid)
@@ -93,8 +97,8 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
 
         mAPIService = ApiUtils.getAPIService();
 
-        nfc_tag = new NfcTag();
-        nfc_tag.init(this);
+        nfcTagHandler = new NfcTagHandler();
+        nfcTagHandler.init(this);
 
         sharePreferencesUtil = new SharePreferencesUtil(this);
         viewModel = ViewModelProviders.of(this).get(NfcDataHistoryViewModel.class);
@@ -131,27 +135,85 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
-            nfc_id = nfc_tag.handleIntent(intent);
+            nfc_id = nfcTagHandler.handleIntent(intent);
         }
     }
 
     @OnClick(R.id.bt_send)
-    void submit() {
+    void submitForm() {
+        submit(new NfcData());
+    }
+
+
+    Disposable disposable;
+
+    void submit(NfcData nfcData) {
         if (validate()) {
-            NfcData nfcData = new NfcData();
             nfcData.setEmployeeId(Integer.valueOf(employeeid.getText().toString()));
             nfcData.setClientId(Integer.valueOf(clientid.getText().toString()));
             nfcData.setOfficeid(Integer.valueOf(officeid.getText().toString()));
             nfcData.setCalltype(cbIn.isChecked() ? MainActivity.this.getString(R.string.CALLTYPE_IN) : MainActivity.this.getString(R.string.CALLTYPE_OUT));
 
-            final String date = DateFormat.getDateTimeInstance().format(new Date());
-            nfcData.setCreateDate(date);
+            if (TextUtils.isEmpty(nfcData.getCreateDate())) {
+                final String date = new SupportUI().fromDateToString(new Date());
+                nfcData.setCreateDate(date);
+            }
 
             nfcData.setNfc(tvNfc.getText().toString());
             nfcData.setTasktype(cbOut.isChecked() ? new SupportUI().getFormatDataSendTasks(listTasks) : "");
             nfcData.setAppSender(this.getString(R.string.android_sender));
 
-            sendPost(nfcData);
+            //check is there is a post with almost the same date time.
+            int subEnd = nfcData.getCreateDate().length() - 7;
+            String subS = nfcData.getCreateDate().substring(0, subEnd);
+
+//Verify is there is another post in history within 5 minutes, so i wont send post again
+            viewModel.getListBySubCreateData(subS + "%")
+                    .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                    .observeOn(io.reactivex.schedulers.Schedulers.trampoline())
+                    .doOnSubscribe(new Consumer<Disposable>() {
+                        @Override
+                        public void accept(Disposable d) throws Exception {
+                            disposable = d;
+                        }
+                    })
+                    .subscribe(new BlockingBaseObserver<List<NfcData>>() {
+
+                        @Override
+                        public void onNext(List<NfcData> nfcDatas) {
+                            SupportUI supportUI = new SupportUI();
+                            if (nfcDatas == null || nfcDatas.isEmpty()) {
+                                sendPost(nfcData);
+                            } else {
+                                boolean send = true;
+                                for (NfcData item : nfcDatas) {
+                                    long min = supportUI.diffMinutesDateTimes(
+                                            supportUI.fromStringToDate(item.createDate),
+                                            supportUI.fromStringToDate(nfcData.createDate));
+                                    if (min < MINUTES_WAIT_TO_SEND_AGAIN &&
+                                            item.getCalltype().equals(nfcData.getCalltype())) {
+                                        runOnUiThread(() -> {
+                                            if (BuildConfig.DEBUG) {
+                                                new SupportUI().showDialogInfo(MainActivity.this, "Visit coul be repeat", "Looks like you have a visit with the send information and almost same time. (" + min + " m ago)  \n " + item.getUid() + " - " + item.getCreateDate() + "\n Try to resend.");
+                                            } else {
+                                                new SupportUI().showDialogInfo(MainActivity.this, "Visit coul be repeat", "Looks like you have a visit with the send information and almost same time. (" + min + " m ago)" + " \n " + item.getCreateDate() + "\n Try to resend.");
+                                            }
+                                        });
+                                        send = false;
+                                        break;
+                                    }
+                                }
+                                if (send) {
+                                    sendPost(nfcData);
+                                }
+                            }
+                            disposable.dispose();
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                        }
+                    });
 
             //saving values for next time show defaults
             sharePreferencesUtil.setValue(EMPLOYEEID_PREFERENCE, String.valueOf(nfcData.getEmployeeId()));
@@ -261,6 +323,7 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
                     @Override
                     public void onError(Throwable e) {
                         new SupportUI().showResponse(MainActivity.this, "Error", "Not internet connection!", false);
+                        AsyncTask.execute(() -> viewModel.addData(nfcData));
                     }
 
                     @Override
@@ -306,13 +369,13 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
     @Override
     protected void onResume() {
         super.onResume();
-        nfc_tag.resume(this);
+        nfcTagHandler.resume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        nfc_tag.pause(this);
+        nfcTagHandler.pause(this);
     }
 
     @Override
@@ -339,9 +402,16 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
                     myDialogHistory.dismiss();
                 }
 
+                //deletede from history in order to dont duplicate
+                viewModel.delete(nfcData);
+                //AsyncTask.execute(() -> viewModel.delete(nfcData));
+
                 employeeid.setText(String.valueOf(nfcData.getEmployeeId()));
                 clientid.setText(String.valueOf(nfcData.getClientId()));
                 officeid.setText(String.valueOf(nfcData.getOfficeid()));
+
+                nfcTagHandler.showCheckedNfc(nfcData.getNfc());
+                // tvNfc.setText(nfcData.getNfc());
 
                 if (nfcData.getCalltype().equals(MainActivity.this.getString(R.string.CALLTYPE_IN))) {
                     cbIn.setChecked(true);
@@ -355,9 +425,9 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
                         }
                     }
                 }
-                tvNfc.setText("");
+                submit(nfcData);
 
-                new SupportUI().showDialogInfo(MainActivity.this, "Data recovered ","Please scan your card again and process to send.");
+                //new SupportUI().showDialogInfo(MainActivity.this, "Data recovered ","Please scan your card again and process to send.");
             }, nfcData);
         }
     }
