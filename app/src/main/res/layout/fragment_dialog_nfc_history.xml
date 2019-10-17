@@ -27,7 +27,7 @@
             android:layout_margin="16dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Data history:"
+            android:text="@string/visit_history"
             android:textColor="@color/Black"
             android:textSize="24sp"
             app:fontFamily="sans-serif-smallcaps" />

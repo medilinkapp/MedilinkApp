@@ -43,7 +43,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     style="@style/TextAppearance.AppCompat.Body1"
-                    android:text="Medilink"
+                    android:text="@string/app_name"
                     android:textColor="@color/blue_donation"
                     android:textSize="34sp"
                     android:textStyle="bold"

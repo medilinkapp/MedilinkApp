@@ -15,7 +15,6 @@ import com.jat.medilinkapp.conf.APIService;
 import com.jat.medilinkapp.conf.ApiUtils;
 import com.jat.medilinkapp.model.entity.NfcData;
 import com.jat.medilinkapp.nfcconf.NfcTagHandler;
-import com.jat.medilinkapp.util.Effects;
 import com.jat.medilinkapp.util.SharePreferencesUtil;
 import com.jat.medilinkapp.viewmodels.NfcDataHistoryViewModel;
 
@@ -129,9 +128,40 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
             cbOut.setError(null);
         });
 
+        employeeid.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    employeeid.setText("");
+                }
+            }
+        });
+
+        clientid.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    clientid.setText("");
+                }
+            }
+        });
+
+        officeid.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    officeid.setText("");
+                }
+            }
+        });
+
         employeeid.setText(sharePreferencesUtil.getValue(EMPLOYEEID_PREFERENCE, ""));
         clientid.setText(sharePreferencesUtil.getValue(CLIENTID_PREFERENCE, ""));
         officeid.setText(sharePreferencesUtil.getValue(OFFICEID_PREFERENCE, ""));
+
+        if (BuildConfig.DEBUG) {
+            // btHistory.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -225,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
         }
     }
 
-    @OnClick(R.id.bt_history)
+    @OnClick({R.id.bt_history, R.id.tv_history_visit_bt})
     void showHistoryFragment() {
         myDialogHistory = new MyFragmentDialogHistory();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

@@ -79,7 +79,7 @@
             android:id="@+id/view"
             android:layout_width="409dp"
             android:layout_height="83dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="60dp"
             android:background="@color/transparentwhite"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
@@ -111,7 +111,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:ems="10"
-            android:hint="Office ID"
+            android:hint="@string/label_office"
             android:inputType="number"
             android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
@@ -125,7 +125,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:ems="10"
-            android:hint="Client ID"
+            android:hint="@string/label_client"
             android:inputType="number"
             android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
@@ -166,7 +166,7 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="8dp"
                 android:gravity="center"
-                android:text="Medilink"
+                android:text="@string/app_name"
                 android:textColor="@color/white"
                 android:textSize="34sp"
                 android:textStyle="bold"
@@ -187,7 +187,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_history_42dp" />
+                app:srcCompat="@drawable/ic_history_42dp"
+                android:visibility="gone" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -198,9 +199,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             android:ems="10"
-            android:hint="Employee ID"
+            android:hint="@string/label_employee"
             android:inputType="number"
             android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
@@ -212,7 +212,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:text="@string/label_employee"
             android:textColor="@color/Black"
             android:textSize="24sp"
@@ -229,7 +228,7 @@
             android:layout_marginStart="50dp"
             android:layout_marginLeft="50dp"
             android:layout_marginTop="16dp"
-            android:text="IN"
+            android:text="@string/in"
             android:textSize="24sp"
             android:textStyle="bold"
             app:fontFamily="sans-serif-smallcaps"
@@ -243,7 +242,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="50dp"
             android:layout_marginRight="50dp"
-            android:text="OUT"
+            android:text="@string/out"
             android:textSize="24sp"
             android:textStyle="bold"
             app:fontFamily="sans-serif-smallcaps"
@@ -255,7 +254,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="NFC"
+            android:text="@string/label_nfc"
             android:textColor="@color/Black"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -295,7 +294,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="32dp"
             android:layout_marginEnd="8dp"
             android:text="@string/send_now"
             android:textSize="24sp"
@@ -362,7 +361,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:animateLayoutChanges="true"
-                android:text="Add Tasks" />
+                android:text="@string/label_add_tasks" />
 
             <FrameLayout
                 android:id="@+id/framelayout_tasks"
@@ -378,6 +377,19 @@
                 android:background="@color/TransparentGreyComment"
                 android:orientation="vertical" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_history_visit_bt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="24dp"
+            android:text="@string/view_history_visits"
+            android:textColor="@color/blue_donation"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bt_send" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

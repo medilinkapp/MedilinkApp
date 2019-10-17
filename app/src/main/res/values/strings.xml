@@ -18,4 +18,10 @@
     <string name="shepherd_communication_inc_2020_version_1_0_0">Shepherd Communication, inc. 2020, Version 1.0.0</string>
     <string name="send_now">SEND NOW</string>
     <string name="count_message_visits_unsent">You have %d number of unsent visits</string>
+    <string name="visit_history">Visit history:</string>
+    <string name="out">OUT</string>
+    <string name="in">IN</string>
+    <string name="label_nfc">NFC</string>
+    <string name="label_add_tasks">Add Tasks</string>
+    <string name="view_history_visits">View History Visits</string>
 </resources>
