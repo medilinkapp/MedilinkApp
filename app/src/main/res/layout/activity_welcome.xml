@@ -11,13 +11,15 @@
         android:id="@+id/linearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="1dp"
-        android:background="@color/white"
+
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/round_layout"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingTop="@dimen/indent_xlarge"
         android:paddingBottom="@dimen/indent_xlarge"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -26,7 +28,7 @@
             style="@style/TextAppearance.AppCompat.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Medilink"
+            android:text="MediLink"
             android:textColor="@color/blue_donation"
             android:textSize="34sp"
             android:textStyle="bold"
@@ -37,16 +39,17 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="5dp"
+            android:layout_height="2dp"
             android:background="@color/TransparentGreyComment" />
 
         <TextView
             style="@style/TextAppearance.AppCompat.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/indent_medium"
             android:text="Electronic visit verification"
             android:textColor="@color/blue_donation"
-            android:textSize="14sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:typeface="normal"
             app:fontFamily="sans-serif-smallcaps">
@@ -66,17 +69,16 @@
 
 
     <TextView
+        android:id="@+id/textView2"
         style="@style/TextAppearance.AppCompat.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="24dp"
         android:gravity="center"
+        android:text="@string/shepherd_communication_inc_2020_version_1_0_0"
         android:textAlignment="center"
-        android:text="Shepherd Communications, inc. 2020, Version 1.0.1"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -85,5 +87,34 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/round_layout"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+        <TextView
+            android:id="@+id/tv_info_unsent_visits"
+            style="@style/TextAppearance.AppCompat.Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/indent_medium"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:typeface="normal"
+            app:fontFamily="sans-serif-smallcaps"
+            tools:text="You have X number of unsent visits" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

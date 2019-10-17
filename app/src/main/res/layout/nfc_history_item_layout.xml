@@ -5,6 +5,7 @@
     android:id="@+id/linearLayout2"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/background_selector"
     android:orientation="horizontal">
 
     <TextView
@@ -20,7 +21,7 @@
         app:fontFamily="sans-serif-smallcaps"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="March, 24, 2019 - 10:30:15" />
+        tools:text="OUT - March, 24, 2019 - 10:30:15" />
 
     <ImageView
         android:id="@+id/img_send_status"

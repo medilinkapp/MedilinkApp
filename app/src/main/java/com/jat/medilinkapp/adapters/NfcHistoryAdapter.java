@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jat.medilinkapp.BuildConfig;
-import com.jat.medilinkapp.MyDialogHistory;
+import com.jat.medilinkapp.MyFragmentDialogHistory;
 import com.jat.medilinkapp.R;
 import com.jat.medilinkapp.model.entity.NfcData;
 
@@ -23,9 +23,9 @@ public class NfcHistoryAdapter extends RecyclerView.Adapter<NfcHistoryAdapter.Vi
     public static final String OUT = "Out";
     public static final String I = "I";
     ArrayList<NfcData> list;
-    MyDialogHistory.DialogListener dialogListener;
+    MyFragmentDialogHistory.DialogListener dialogListener;
 
-    public NfcHistoryAdapter(ArrayList<NfcData> list, MyDialogHistory.DialogListener dialogListener) {
+    public NfcHistoryAdapter(ArrayList<NfcData> list, MyFragmentDialogHistory.DialogListener dialogListener) {
         this.list = list;
         this.dialogListener = dialogListener;
     }
@@ -50,9 +50,9 @@ public class NfcHistoryAdapter extends RecyclerView.Adapter<NfcHistoryAdapter.Vi
 
         TextView tvNfcTimeStamp = holder.tvNfcTimeStamp;
         if (BuildConfig.DEBUG) {
-            tvNfcTimeStamp.setText(nfcData.getUid() + " - " + nfcData.getCreateDate());
+            tvNfcTimeStamp.setText(nfcData.getUid() + " - " + (nfcData.getCalltype().equals(I) ? IN : OUT) + " - " + nfcData.getCreateDate());
         } else {
-            tvNfcTimeStamp.setText(nfcData.getCalltype().equals(I) ? IN : OUT + " - " + nfcData.getCreateDate());
+            tvNfcTimeStamp.setText((nfcData.getCalltype().equals(I) ? IN : OUT) + " - " + nfcData.getCreateDate());
         }
 
         ImageView imgStatus = holder.imgSendStatus;

@@ -1,13 +1,20 @@
 package com.jat.medilinkapp;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.jat.medilinkapp.model.entity.NfcData;
@@ -20,8 +27,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import rx.Observable;
-import rx.Subscriber;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 
 public class SupportUI {
 
@@ -94,15 +102,15 @@ public class SupportUI {
     }
 
     public Observable<Boolean> checkInternetConnetion() {
-        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
-            public void call(Subscriber<? super Boolean> subscriber) {
+            public void subscribe(ObservableEmitter<Boolean> emitter) throws Exception {
                 try {
                     InetAddress ipAddr = InetAddress.getByName("google.com");
-                    subscriber.onNext(!ipAddr.equals(""));
-                    subscriber.onCompleted();
+                    emitter.onNext(!ipAddr.equals(""));
+                    emitter.onComplete();
                 } catch (Exception e) {
-                    subscriber.onError(e);
+                    emitter.onError(e);
                 }
             }
         });
@@ -171,6 +179,10 @@ public class SupportUI {
 
 
     public void showDialogInfo(MainActivity activity, String titleMsg, String message) {
+        showDialogInfo(activity, titleMsg, message, null);
+    }
+
+    public void showDialogInfo(MainActivity activity, String titleMsg, String message, ISingleActionCallBack callBack) {
         // custom dialog
         final Dialog dialogWF;
         dialogWF = new Dialog(activity, R.style.dialogStyle);
@@ -194,6 +206,9 @@ public class SupportUI {
         tvMsgDialog.setText(message);
 
         btOK.setOnClickListener(v -> {
+            if (callBack != null) {
+                callBack.callBack();
+            }
             dialogWF.dismiss();
         });
         dialogWF.show();
@@ -217,6 +232,34 @@ public class SupportUI {
         long diffInMillisec = dateEnd.getTime() - dateStart.getTime();
         long diffInMin = TimeUnit.MILLISECONDS.toMinutes(diffInMillisec);
         return diffInMin;
+    }
+
+    public void verifyNfcOn(MainActivity context, ISingleActionCallBack callBack) {
+        android.nfc.NfcAdapter mNfcAdapter = android.nfc.NfcAdapter.getDefaultAdapter(context);
+
+        if (mNfcAdapter != null && !mNfcAdapter.isEnabled()) {
+            showDialogInfo(context, "NFC is not Enabled", "Please turn on your NFC feature to use the MediLink EVV app!", new ISingleActionCallBack() {
+                @Override
+                public void callBack() {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        Intent intent = new Intent(Settings.ACTION_NFC_SETTINGS);
+                        context.startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+                        context.startActivity(intent);
+                    }
+                }
+            });
+        } else {
+            callBack.callBack();
+        }
+    }
+
+
+    public static void showKeyboard(EditText mEtSearch, Context context) {
+        mEtSearch.requestFocus();
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
 

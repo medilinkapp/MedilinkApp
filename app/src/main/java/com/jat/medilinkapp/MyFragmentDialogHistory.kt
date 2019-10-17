@@ -20,7 +20,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Consumer
 
 
-class MyDialogHistory : DialogFragment() {
+class MyFragmentDialogHistory : DialogFragment() {
     private var nfcHistoryAdapter: NfcHistoryAdapter? = null
     private var viewModel: NfcDataHistoryViewModel? = null
     private val disposables = CompositeDisposable()
@@ -50,17 +50,19 @@ class MyDialogHistory : DialogFragment() {
         })
 
         val btDeleteAll = viewDialog.findViewById<ImageView>(com.jat.medilinkapp.R.id.bt_delete_all)
+        if (BuildConfig.DEBUG) {
+            btDeleteAll.visibility = View.VISIBLE
+        }
         btDeleteAll.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
                 AsyncTask.execute(Runnable {
                     viewModel!!.deleteAll()
                     dismiss()
-                    (activity as MyDialogHistory.DialogListener).onDeleteData();
+                    (activity as MyFragmentDialogHistory.DialogListener).onDeleteData();
 
                 })
             }
         })
-
 
         dialog.setCanceledOnTouchOutside(false)
 
@@ -72,7 +74,7 @@ class MyDialogHistory : DialogFragment() {
 
                 }));
 
-        nfcHistoryAdapter = NfcHistoryAdapter(ArrayList(), activity as MyDialogHistory.DialogListener)
+        nfcHistoryAdapter = NfcHistoryAdapter(ArrayList(), activity as MyFragmentDialogHistory.DialogListener)
         with(viewDialog.findViewById(com.jat.medilinkapp.R.id.rv_tasks) as RecyclerView) {
             adapter = nfcHistoryAdapter
             val linearLayoutManager = LinearLayoutManager(activity);

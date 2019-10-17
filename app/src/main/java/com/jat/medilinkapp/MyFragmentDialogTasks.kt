@@ -13,11 +13,12 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import androidx.fragment.app.DialogFragment
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jat.medilinkapp.adapters.TaskAdapter
 
-class MyDialog : DialogFragment() {
+
+class MyFragmentDialogTasks : DialogFragment() {
     var list = ArrayList<String>()
     val taskAdapter = TaskAdapter(list)
 
@@ -92,11 +93,13 @@ class MyDialog : DialogFragment() {
             }
         }
 
+        SupportUI.showKeyboard(editText, context)
+
         dialog.setCanceledOnTouchOutside(false)
 
         with(viewDialog.findViewById(com.jat.medilinkapp.R.id.rv_tasks) as RecyclerView) {
             adapter = taskAdapter
-            layoutManager = LinearLayoutManager(activity)
+            layoutManager = GridLayoutManager(activity, 3)
         }
 
     }

@@ -38,5 +38,9 @@ public class NfcDataRepository {
         appDatabase.nfcDataDao().delete(nfcData);
     }
 
+    public Observable<List<NfcData>> getListIsSend(boolean send) {
+        return appDatabase.nfcDataDao().getListIsSend(send);
+    }
+
 
 }

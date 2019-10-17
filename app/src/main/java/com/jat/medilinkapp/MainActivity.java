@@ -15,6 +15,7 @@ import com.jat.medilinkapp.conf.APIService;
 import com.jat.medilinkapp.conf.ApiUtils;
 import com.jat.medilinkapp.model.entity.NfcData;
 import com.jat.medilinkapp.nfcconf.NfcTagHandler;
+import com.jat.medilinkapp.util.Effects;
 import com.jat.medilinkapp.util.SharePreferencesUtil;
 import com.jat.medilinkapp.viewmodels.NfcDataHistoryViewModel;
 
@@ -31,16 +32,13 @@ import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Observer;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.internal.observers.BlockingBaseObserver;
-import rx.Observer;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity implements MyDialog.DialogListener, MyDialogHistory.DialogListener {
+public class MainActivity extends AppCompatActivity implements MyFragmentDialogTasks.DialogListener, MyFragmentDialogHistory.DialogListener {
 
     public static final String LIST = "list";
     public static final String NOT_ALERT_DIALOG = "notAlertDialog";
@@ -70,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
     @BindView(R.id.tv_nfc)
     TextView tvNfc;
 
+    @BindView(R.id.layout_nfc_card)
+    View layoutTvNfc;
+
     @BindView(R.id.tv_tasks_string)
     TextView tvTasks;
 
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
 
     NfcDataHistoryViewModel viewModel;
 
-    MyDialogHistory myDialogHistory;
+    MyFragmentDialogHistory myDialogHistory;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
     private SharePreferencesUtil sharePreferencesUtil;
@@ -102,7 +103,9 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
 
         sharePreferencesUtil = new SharePreferencesUtil(this);
         viewModel = ViewModelProviders.of(this).get(NfcDataHistoryViewModel.class);
+
         //AsyncTask.execute(() -> viewModel.deleteAll());
+
         initUI();
     }
 
@@ -178,7 +181,6 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
                         }
                     })
                     .subscribe(new BlockingBaseObserver<List<NfcData>>() {
-
                         @Override
                         public void onNext(List<NfcData> nfcDatas) {
                             SupportUI supportUI = new SupportUI();
@@ -191,7 +193,8 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
                                             supportUI.fromStringToDate(item.createDate),
                                             supportUI.fromStringToDate(nfcData.createDate));
                                     if (min < MINUTES_WAIT_TO_SEND_AGAIN &&
-                                            item.getCalltype().equals(nfcData.getCalltype())) {
+                                            item.getCalltype().equals(nfcData.getCalltype())
+                                            && item.getClientId() == nfcData.getClientId()) {
                                         runOnUiThread(() -> {
                                             if (BuildConfig.DEBUG) {
                                                 new SupportUI().showDialogInfo(MainActivity.this, "Visit coul be repeat", "Looks like you have a visit with the send information and almost same time. (" + min + " m ago)  \n " + item.getUid() + " - " + item.getCreateDate() + "\n Try to resend.");
@@ -224,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
 
     @OnClick(R.id.bt_history)
     void showHistoryFragment() {
-        myDialogHistory = new MyDialogHistory();
+        myDialogHistory = new MyFragmentDialogHistory();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment prev = getSupportFragmentManager().findFragmentByTag(DIALOG_TAG_HISTORY);
         if (prev != null) {
@@ -236,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
 
     @OnClick(R.id.bt_add_tasks)
     void showDialogAddTasks() {
-        MyDialog dialogFragment = new MyDialog();
+        MyFragmentDialogTasks dialogFragment = new MyFragmentDialogTasks();
 
         Bundle bundle = new Bundle();
         bundle.putBoolean(NOT_ALERT_DIALOG, true);
@@ -313,32 +316,39 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
 
     private void sendPost(NfcData nfcData) {
         //check is there is intenet connection
-        new SupportUI().checkInternetConnetion().subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
+        new SupportUI().checkInternetConnetion().subscribeOn(io.reactivex.schedulers.Schedulers.newThread())
+                .observeOn(io.reactivex.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Boolean>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                               @Override
+                               public void onSubscribe(Disposable d) {
+                               }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        new SupportUI().showResponse(MainActivity.this, "Error", "Not internet connection!", false);
-                        AsyncTask.execute(() -> viewModel.addData(nfcData));
-                    }
+                               @Override
+                               public void onNext(Boolean aBoolean) {
+                                   if (aBoolean)
+                                       sendDataPost(nfcData);
+                               }
 
-                    @Override
-                    public void onNext(Boolean aBoolean) {
-                        if (aBoolean)
-                            sendDataPost(nfcData);
-                    }
-                });
+                               @Override
+                               public void onError(Throwable e) {
+                                   new SupportUI().showResponse(MainActivity.this, "Error", "Not internet connection!", false);
+                                   AsyncTask.execute(() -> viewModel.addData(nfcData));
+                               }
+
+                               @Override
+                               public void onComplete() {
+                               }
+                           }
+                );
     }
 
     private void sendDataPost(NfcData nfcData) {
         // RxJava
         final Dialog progress = new SupportUI().showProgress(this);
-        mAPIService.savePost(nfcData).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<NfcData>() {
+        mAPIService.savePost(nfcData)
+                .subscribeOn(rx.schedulers.Schedulers.newThread())
+                .observeOn(rx.schedulers.Schedulers.trampoline())
+                .subscribe(new rx.Observer<NfcData>() {
                     @Override
                     public void onCompleted() {
                         progress.dismiss();
@@ -346,13 +356,17 @@ public class MainActivity extends AppCompatActivity implements MyDialog.DialogLi
                         nfcData.setSend(true);
                         //add to the history
                         AsyncTask.execute(() -> viewModel.addData(nfcData));
-
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         progress.dismiss();
-                        new SupportUI().showResponse(MainActivity.this, "Error", e.getLocalizedMessage(), false);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                new SupportUI().showResponse(MainActivity.this, "Error", e.getLocalizedMessage(), false);
+                            }
+                        });
                         nfcData.setSend(false);
                         //add to the history
                         AsyncTask.execute(() -> viewModel.addData(nfcData));

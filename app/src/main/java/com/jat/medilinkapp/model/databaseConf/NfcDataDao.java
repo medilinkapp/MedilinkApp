@@ -29,4 +29,7 @@ public interface NfcDataDao {
     @Query("SELECT * FROM NfcData where created_date like :createDate")
     Observable<List<NfcData>> getListBySubCreateData(String createDate);
 
+    @Query("SELECT * FROM NfcData where is_send like :send")
+    Observable<List<NfcData>> getListIsSend(boolean send);
+
 }

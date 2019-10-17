@@ -29,6 +29,10 @@ public class NfcDataHistoryViewModel extends AndroidViewModel {
         return nfcDataRepository.getListBySubCreateData(subDate);
     }
 
+    public Observable<List<NfcData>> getListIsSend(boolean send) {
+        return nfcDataRepository.getListIsSend(send);
+    }
+
     public Long addData(NfcData modelClass) {
         return nfcDataRepository.addData(modelClass);
     }

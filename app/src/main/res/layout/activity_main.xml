@@ -94,7 +94,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:text="Office:"
+            android:text="@string/label_office"
             android:textColor="@color/Black"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -138,7 +138,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:text="Client:"
+            android:text="@string/label_client"
             android:textColor="@color/Black"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -163,7 +163,7 @@
                 style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="24dp"
                 android:layout_marginBottom="8dp"
                 android:gravity="center"
                 android:text="Medilink"
@@ -213,7 +213,7 @@
             android:layout_marginTop="24dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:text="Employee:"
+            android:text="@string/label_employee"
             android:textColor="@color/Black"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -265,40 +265,44 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/layout_task" />
 
-        <TextView
-            android:id="@+id/tv_nfc"
+        <LinearLayout
+            android:id="@+id/layout_nfc_card"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:clickable="true"
-            android:ems="10"
-            android:focusable="false"
-            android:hint="Scan your card."
-            android:inputType="textPersonName"
-            android:textAlignment="center"
-            android:textSize="18sp"
-            android:textStyle="italic"
-            app:fontFamily="sans-serif-smallcaps"
+            android:background="@drawable/round_layout_grey"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_label_nfc" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_label_nfc">
+
+            <TextView
+                android:id="@+id/tv_nfc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/indent_medium"
+                android:focusable="false"
+                android:text="@string/nfc_default_message"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold|italic"
+                app:fontFamily="sans-serif-smallcaps" />
+
+        </LinearLayout>
+
 
         <Button
             android:id="@+id/bt_send"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="60dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-
-            android:text="Send"
+            android:text="@string/send_now"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_nfc" />
+            app:layout_constraintTop_toBottomOf="@+id/layout_nfc_card" />
 
         <View
             android:id="@+id/view2"
@@ -314,12 +318,13 @@
             android:id="@+id/img_nfc_checked"
             android:layout_width="43dp"
             android:layout_height="43dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="2dp"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_label_nfc"
-            app:srcCompat="@drawable/ic_check_circle_nfc" />
+            app:srcCompat="@drawable/ic_check_circle_nfc"
+            tools:visibility="visible" />
 
         <LinearLayout
             android:id="@+id/layout_task"
