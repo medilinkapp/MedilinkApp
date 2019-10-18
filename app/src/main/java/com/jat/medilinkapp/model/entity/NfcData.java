@@ -22,6 +22,8 @@ public class NfcData implements Parcelable {
     private boolean isSend;
 
     @ColumnInfo(name = "created_date")
+    @SerializedName("created_date")
+    @Expose
     public String createDate;
 
     @ColumnInfo(name = "calltype")

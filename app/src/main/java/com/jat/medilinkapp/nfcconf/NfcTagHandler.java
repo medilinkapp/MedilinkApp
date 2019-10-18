@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.jat.medilinkapp.MainActivity;
 import com.jat.medilinkapp.R;
-import com.jat.medilinkapp.SupportUI;
+import com.jat.medilinkapp.util.SupportUI;
 import com.jat.medilinkapp.util.Effects;
 import com.jat.medilinkapp.util.ISingleActionCallBack;
 
@@ -167,7 +167,7 @@ public class NfcTagHandler {
                 pending_intent,
                 write_tag_filters,
                 null);
-        new SupportUI().verifyNfcOn(activity, new ISingleActionCallBack() {
+        new SupportUI().verifyIfNfcOn(activity, new ISingleActionCallBack() {
             @Override
             public void callBack() {
                 if (nfc_adapter.isEnabled() && TextUtils.isEmpty(nfc_text.getText())) {

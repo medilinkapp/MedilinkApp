@@ -3,26 +3,23 @@ package com.jat.medilinkapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
-
-import com.jat.medilinkapp.model.entity.NfcData;
-import com.jat.medilinkapp.viewmodels.NfcDataHistoryViewModel;
-import com.microsoft.appcenter.AppCenter;
-import com.microsoft.appcenter.analytics.Analytics;
-import com.microsoft.appcenter.crashes.Crashes;
-
-import java.util.List;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import com.jat.medilinkapp.model.entity.NfcData;
+import com.jat.medilinkapp.viewmodels.NfcDataHistoryViewModel;
+import com.microsoft.appcenter.AppCenter;
+import com.microsoft.appcenter.analytics.Analytics;
+import com.microsoft.appcenter.crashes.Crashes;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.internal.observers.BlockingBaseObserver;
 import io.reactivex.schedulers.Schedulers;
+import java.util.List;
 
 public class Welcome extends AppCompatActivity {
 
@@ -45,7 +42,10 @@ public class Welcome extends AppCompatActivity {
 
         viewModel = ViewModelProviders.of(this).get(NfcDataHistoryViewModel.class);
 
+        checkUnsentVisits();
+    }
 
+    private void checkUnsentVisits() {
         viewModel.getListIsSend(false).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
             @Override
             public void accept(Disposable d) throws Exception {

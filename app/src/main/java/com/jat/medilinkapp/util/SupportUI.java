@@ -1,4 +1,4 @@
-package com.jat.medilinkapp;
+package com.jat.medilinkapp.util;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -16,11 +16,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import com.jat.medilinkapp.MainActivity;
+import com.jat.medilinkapp.R;
 import com.jat.medilinkapp.model.entity.NfcData;
-import com.jat.medilinkapp.util.IRxActionCallBack;
-import com.jat.medilinkapp.util.ISingleActionCallBack;
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -28,6 +27,7 @@ import java.net.InetAddress;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -234,31 +234,12 @@ public class SupportUI {
         dialogWF.show();
     }
 
-    public Date fromStringToDate(String sDate) {
-        try {
-            Date d = DATE_TIME_INSTANCE.parse(sDate);
-            return d;
-        } catch (ParseException ex) {
-            Log.v("Exception", ex.getLocalizedMessage());
-        }
-        return null;
-    }
 
-    public String fromDateToString(Date date) {
-        return DATE_TIME_INSTANCE.format(new Date());
-    }
-
-    public long diffMinutesDateTimes(Date dateStart, Date dateEnd) {
-        long diffInMillisec = dateEnd.getTime() - dateStart.getTime();
-        long diffInMin = TimeUnit.MILLISECONDS.toMinutes(diffInMillisec);
-        return diffInMin;
-    }
-
-    public void verifyNfcOn(MainActivity context, ISingleActionCallBack callBack) {
+    public void verifyIfNfcOn(MainActivity context, ISingleActionCallBack callBack) {
         android.nfc.NfcAdapter mNfcAdapter = android.nfc.NfcAdapter.getDefaultAdapter(context);
 
         if (mNfcAdapter != null && !mNfcAdapter.isEnabled()) {
-            showDialogInfo(context, "NFC is not Enabled", "Please turn on your NFC feature to use the MediLink EVV app!", new ISingleActionCallBack() {
+            showDialogInfo(context, context.getString(R.string.nfc_not_enabled), context.getString(R.string.message_turn_on_nfc), new ISingleActionCallBack() {
                 @Override
                 public void callBack() {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -271,15 +252,55 @@ public class SupportUI {
                 }
             });
         } else {
-            callBack.callBack();
+            if (callBack != null)
+                callBack.callBack();
         }
     }
-
 
     public static void showKeyboard(EditText mEtSearch, Context context) {
         mEtSearch.requestFocus();
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+    }
+
+    public Date fromStringToDate(String sDate) {
+        try {
+            Date d = DATE_TIME_INSTANCE.parse(sDate);
+            return d;
+        } catch (ParseException ex) {
+            Log.v("Exception", ex.getLocalizedMessage());
+        }
+        return null;
+    }
+
+    public String fromDateToString(Date date) {
+        return DATE_TIME_INSTANCE.format(date);
+    }
+
+    public long diffMinutesDateTimes(Date dateStart, Date dateEnd) {
+        long diffInMillisec = dateEnd.getTime() - dateStart.getTime();
+        long diffInMin = TimeUnit.MILLISECONDS.toMinutes(diffInMillisec);
+        return diffInMin;
+    }
+
+    public boolean isYesterday(Date myDate) {
+        Calendar c1 = Calendar.getInstance(); // today
+        c1.add(Calendar.DAY_OF_YEAR, -1); // yesterday
+
+        Calendar c2 = Calendar.getInstance();
+        c2.setTime(myDate); // your date
+
+        if (c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR)
+                && c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR)) {
+            return true;
+        }
+        return false;
+    }
+
+    public String getYesterday() {
+        Calendar c1 = Calendar.getInstance(); // today
+        c1.add(Calendar.DAY_OF_YEAR, -1); // yesterday
+        return fromDateToString(c1.getTime());
     }
 
 

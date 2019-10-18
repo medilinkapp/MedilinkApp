@@ -1,6 +1,7 @@
 package com.jat.medilinkapp.backgroudservice;
 
 import android.content.Context;
+import android.util.Log;
 import com.jat.medilinkapp.conf.APIService;
 import com.jat.medilinkapp.conf.ApiUtils;
 import com.jat.medilinkapp.model.NfcDataRepository;
@@ -19,6 +20,7 @@ public class TaskReSendVisit {
         this.context = context;
         nfcDataRepository = new NfcDataRepository(context);
         mAPIService = ApiUtils.getAPIService();
+        Log.i(TaskReSendVisit.class.getSimpleName(), "list size: " +list.size());
     }
 
     public void start() {
@@ -40,6 +42,7 @@ public class TaskReSendVisit {
                         nfcData.setSend(true);
                         //add to the history
                         nfcDataRepository.addData(nfcData);
+                        Log.i(TaskReSendVisit.class.getSimpleName(), "Visit " + nfcData.getUid() +" was send!");
                     }
 
                     @Override
@@ -47,6 +50,7 @@ public class TaskReSendVisit {
                         nfcData.setSend(false);
                         //add to the history
                         nfcDataRepository.addData(nfcData);
+                        Log.i(TaskReSendVisit.class.getSimpleName(), " Error Visit " + nfcData.getUid() +" was not send!");
                     }
 
                     @Override

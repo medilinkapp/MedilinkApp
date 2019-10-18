@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jat.medilinkapp.adapters.NfcHistoryAdapter
 import com.jat.medilinkapp.model.entity.NfcData
 import com.jat.medilinkapp.viewmodels.NfcDataHistoryViewModel
+import com.microsoft.appcenter.utils.HandlerUtils
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Consumer
 
@@ -69,8 +70,9 @@ class MyFragmentDialogHistory : DialogFragment() {
         disposables.add(viewModel!!.list.subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(io.reactivex.schedulers.Schedulers.trampoline())
                 .subscribe(Consumer { list ->
-                    nfcHistoryAdapter!!.setList(ArrayList(list));
-                    nfcHistoryAdapter!!.notifyDataSetChanged();
+                    HandlerUtils.runOnUiThread(Runnable { nfcHistoryAdapter!!.setList(ArrayList(list)); })
+
+                    //nfcHistoryAdapter!!.notifyDataSetChanged();
 
                 }));
 

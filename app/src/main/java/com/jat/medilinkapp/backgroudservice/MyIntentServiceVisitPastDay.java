@@ -3,7 +3,8 @@ package com.jat.medilinkapp.backgroudservice;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import com.jat.medilinkapp.SupportUI;
+import android.util.Log;
+import com.jat.medilinkapp.util.SupportUI;
 import com.jat.medilinkapp.model.entity.NfcData;
 import com.jat.medilinkapp.util.IRxActionCallBack;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class MyIntentServiceVisitPastDay extends IntentService {
         intent.setAction(ACTION_RESEND_VISIT);
         intent.putParcelableArrayListExtra(EXTRA_LIST_VISITS, list);
         context.startService(intent);
+        Log.i(TaskReSendVisit.class.getSimpleName(), "Server Init.");
     }
 
     @Override
@@ -33,7 +35,7 @@ public class MyIntentServiceVisitPastDay extends IntentService {
             final String action = intent.getAction();
             if (ACTION_RESEND_VISIT.equals(action)) {
                 final ArrayList<NfcData> list = intent.getParcelableArrayListExtra(EXTRA_LIST_VISITS);
-                handleActionFoo(list);
+                handleActionResendVisit(list);
             }
         }
     }
@@ -42,7 +44,7 @@ public class MyIntentServiceVisitPastDay extends IntentService {
      * Handle action ACTION_RESEND_VISIT in the provided background thread with the provided
      * parameters.
      */
-    private void handleActionFoo(ArrayList<NfcData> list) {
+    private void handleActionResendVisit(ArrayList<NfcData> list) {
         new SupportUI().checkInternetConnetion(new IRxActionCallBack() {
             @Override
             public void completed() {

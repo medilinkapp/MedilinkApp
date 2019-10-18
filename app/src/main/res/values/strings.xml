@@ -27,4 +27,8 @@
     <string name="duplicate_visit">Duplicate Visit</string>
     <string name="message_duplicate_visit">STOP! This visit appears to be a duplicate. Please view your history log.</string>
     <string name="error_message_length">%s: Should be between %d and %d digits!</string>
+    <string name="nfc_not_enabled">NFC is not Enabled</string>
+    <string name="message_turn_on_nfc">Please turn on your NFC feature to use the MediLink EVV app!</string>
+    <string name="information">Information</string>
+    <string name="message_sending_past_visit_background">We are sending %d past visits in background.</string>
 </resources>

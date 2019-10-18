@@ -16,6 +16,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jat.medilinkapp.adapters.TaskAdapter
+import com.jat.medilinkapp.util.SupportUI
 
 
 class MyFragmentDialogTasks : DialogFragment() {
