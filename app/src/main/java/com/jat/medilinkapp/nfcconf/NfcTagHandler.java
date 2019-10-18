@@ -184,7 +184,7 @@ public class NfcTagHandler {
         nfc_adapter.disableForegroundDispatch(activity);
     }
 
-    private void showErrorTvNfc(String s) {
+    public void showErrorTvNfc(String s) {
         nfc_text.setText(s);
         nfc_text.setError(s);
         nfc_text.setVisibility(View.VISIBLE);
@@ -199,5 +199,6 @@ public class NfcTagHandler {
         nfc_checked_img.setVisibility(View.VISIBLE);
         nfc_text.setError(null);
     }
+
 }
 

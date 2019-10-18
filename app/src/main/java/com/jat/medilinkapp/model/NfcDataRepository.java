@@ -1,20 +1,22 @@
 package com.jat.medilinkapp.model;
 
 import android.app.Application;
-
+import android.content.Context;
+import androidx.annotation.NonNull;
 import com.jat.medilinkapp.model.databaseConf.MyDataBase;
 import com.jat.medilinkapp.model.entity.NfcData;
-
-import java.util.List;
-
-import androidx.annotation.NonNull;
 import io.reactivex.Observable;
+import java.util.List;
 
 public class NfcDataRepository {
 
     private MyDataBase appDatabase;
 
     public NfcDataRepository(@NonNull Application application) {
+        appDatabase = MyDataBase.getDatabase(application);
+    }
+
+    public NfcDataRepository(@NonNull Context application) {
         appDatabase = MyDataBase.getDatabase(application);
     }
 

@@ -8,14 +8,16 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+
 @Database(entities = {NfcData.class}, version = 1)
 public abstract class MyDataBase extends RoomDatabase {
 
+    public static final String NFCDB = "NFCDB";
     private static MyDataBase instance;
 
     public static MyDataBase getDatabase(Context context) {
         if (instance == null) {
-            instance = Room.databaseBuilder(context, MyDataBase.class, "NFCDB").allowMainThreadQueries().build();
+            instance = Room.databaseBuilder(context, MyDataBase.class, NFCDB).allowMainThreadQueries().build();
         }
         return instance;
     }

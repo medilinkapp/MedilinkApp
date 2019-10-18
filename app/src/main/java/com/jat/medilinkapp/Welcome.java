@@ -26,16 +26,12 @@ import io.reactivex.schedulers.Schedulers;
 
 public class Welcome extends AppCompatActivity {
 
-
     @BindView(R.id.tv_info_unsent_visits)
     TextView tvInfoUnSent;
 
     Unbinder unbinder;
-
     NfcDataHistoryViewModel viewModel;
-
     Disposable disposable;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

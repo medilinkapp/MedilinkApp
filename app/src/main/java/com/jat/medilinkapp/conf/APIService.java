@@ -8,5 +8,5 @@ import rx.Observable;
 
 public interface APIService {
     @POST("r/n")
-    Observable<NfcData> savePost(@Body NfcData post);
+    Observable<NfcData> sendPost(@Body NfcData post);
 }

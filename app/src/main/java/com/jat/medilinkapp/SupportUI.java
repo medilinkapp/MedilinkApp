@@ -16,20 +16,20 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import com.jat.medilinkapp.model.entity.NfcData;
+import com.jat.medilinkapp.util.IRxActionCallBack;
 import com.jat.medilinkapp.util.ISingleActionCallBack;
-
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import java.net.InetAddress;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 
 public class SupportUI {
 
@@ -101,19 +101,39 @@ public class SupportUI {
         return dialogWF;
     }
 
-    public Observable<Boolean> checkInternetConnetion() {
-        return Observable.create(new ObservableOnSubscribe<Boolean>() {
-            @Override
-            public void subscribe(ObservableEmitter<Boolean> emitter) throws Exception {
-                try {
-                    InetAddress ipAddr = InetAddress.getByName("google.com");
-                    emitter.onNext(!ipAddr.equals(""));
-                    emitter.onComplete();
-                } catch (Exception e) {
-                    emitter.onError(e);
-                }
+    public void checkInternetConnetion(IRxActionCallBack callBack) {
+        Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
+            try {
+                InetAddress ipAddr = InetAddress.getByName("google.com");
+                emitter.onNext(!ipAddr.equals(""));
+                emitter.onComplete();
+            } catch (Exception e) {
+                emitter.onError(e);
             }
-        });
+        }).subscribeOn(io.reactivex.schedulers.Schedulers.newThread())
+                .observeOn(io.reactivex.android.schedulers.AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Boolean>() {
+                               @Override
+                               public void onSubscribe(Disposable d) {
+                               }
+
+                               @Override
+                               public void onNext(Boolean aBoolean) {
+                                   if (aBoolean) {
+                                       callBack.completed();
+                                   }
+                               }
+
+                               @Override
+                               public void onError(Throwable e) {
+                                   callBack.error();
+                               }
+
+                               @Override
+                               public void onComplete() {
+                               }
+                           }
+                );
     }
 
     public String getFormatDataSendTasks(ArrayList<String> list) {
