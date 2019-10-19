@@ -229,8 +229,9 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
             if (TextUtils.isEmpty(nfcData.getCreateDate())) {
                 final String date = new SupportUI().fromDateToString(new Date());
                 nfcData.setCreateDate(date);
-                String yesterday = new SupportUI().getYesterday();
-                nfcData.setCreateDate(yesterday);
+                //test background resend
+                //String yesterday = new SupportUI().getYesterday();
+                //nfcData.setCreateDate(yesterday);
             }
 
             nfcData.setNfc(nfc_id);
