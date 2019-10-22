@@ -11,12 +11,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.jat.medilinkapp.MainActivity;
 import com.jat.medilinkapp.R;
-import com.jat.medilinkapp.util.SupportUI;
+import com.jat.medilinkapp.model.entity.NfcDataTag;
 import com.jat.medilinkapp.util.Effects;
 import com.jat.medilinkapp.util.ISingleActionCallBack;
+import com.jat.medilinkapp.util.SupportUI;
+import java.io.UnsupportedEncodingException;
+import org.jetbrains.annotations.NotNull;
 
 
 public class NfcTagHandler {
@@ -48,7 +50,10 @@ public class NfcTagHandler {
             }
         }
 
-        handleIntent(activity.getIntent());
+        Intent intent = activity.getIntent();
+        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
+            handleIntent(intent);
+        }
 
         pending_intent = PendingIntent.getActivity(
                 activity,
@@ -65,94 +70,71 @@ public class NfcTagHandler {
         Effects.getInstance().init(activity);
     }
 
-    public String handleIntent(Intent intent) {
-        String action = intent.getAction();
-
+    public NfcDataTag handleIntent(Intent intent) {
+        String id = "";
+        String ws = "";
         Log.d(TAG, "handleIntent() " + intent.toString());
 
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
-            Log.d(TAG, "NDEF DISCOVERED");
-            if (intent.hasExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)) {
-                return readMessagesNFC(intent);
-            }
-            return "";
-        } else if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)) {
-            Log.d(TAG, "TECH DISCOVERED");
+        ws = getWsFromNFC(intent);
 
-            return "";
-        } else if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
-            if (intent.hasExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)) {
-                return readMessagesNFC(intent);
-            } else {
-                showErrorTvNfc("invalid card!");
-                Effects.getInstance().playSoundShort(Effects.Sound.WRONG);
-            }
+        //use it to read the serial number in the card
+        id = getSerialRecordFromNfc(intent);
+
+        if (!TextUtils.isEmpty(id) && !TextUtils.isEmpty(ws)) {
+            showCheckedNfc(id);
+            Effects.getInstance().playSoundShort(Effects.Sound.CLICK);
+            return new NfcDataTag(id, ws);
+        } else {
+            showErrorTvNfc("invalid card!");
+            Effects.getInstance().playSoundShort(Effects.Sound.WRONG);
         }
-
-//        } else if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
-//            Parcelable[] rawMessages =
-//                    intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-//            if (rawMessages != null) {
-//                NdefMessage[] messages = new NdefMessage[rawMessages.length];
-//                for (int i = 0; i < rawMessages.length; i++) {
-//                    messages[i] = (NdefMessage) rawMessages[i];
-//                }
-//
-//                // Process the messages array.
-//            }
-//        } else if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
-//            Log.d(TAG, "TAG_DISCOVERED");
-//
-//            Parcelable[] rawMessages =
-//                    intent.getParcelableArrayExtra(NfcAdapter.EXTRA_TAG);
-//
-//            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-//
-//            if (tag != null) {
-//                Log.d(TAG, tag.toString());
-//            }
-//
-//            if (intent.hasExtra(NfcAdapter.EXTRA_ID)) {
-//                byte[] id = intent.getByteArrayExtra(NfcAdapter.EXTRA_ID);
-//                int n;
-//                int number = 0;
-//                String id_string = "";
-//
-//                for (n = 0; n < id.length; n++) {
-//                    number = number << 8;
-//                    number |= ((int) id[n]) & 0xff;
-//
-//                    if (n != 0) {
-//                        id_string += ".";
-//                    }
-//                    String hex = Integer.toHexString(((int) id[n]) & 0xff);
-//
-//                    if (hex.length() == 1) {
-//                        hex = "0" + hex;
-//                    }
-//                    id_string += hex;
-//                }
-//                Log.d(TAG, "id: " + number);
-//                nfc_text.setText(id_string);
-//            }
-//            return true;
-//        }
-        return "";
+        return new NfcDataTag("", "");
     }
 
-    private String readMessagesNFC(Intent intent) {
+    @NotNull
+    private String getSerialRecordFromNfc(Intent intent) {
+        String id;
+        byte[] tagId = intent.getByteArrayExtra(NfcAdapter.EXTRA_ID);
+        String hexdump = new String();
+        for (int i = 0; i < tagId.length; i++) {
+            String x = Integer.toHexString(((int) tagId[i] & 0xff));
+            if (x.length() == 1) {
+                x = '0' + x;
+            }
+            hexdump += x;
+        }
+        Log.i("id", hexdump);
+        id = hexdump.toUpperCase();
+
+        if (id.length() >= 8) {
+            id = id.substring(id.length() - 8);
+        }
+        return id;
+    }
+
+    private String getWsFromNFC(Intent intent) {
+        String ws = "";
+        if (intent.hasExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)) {
+            try {
+                ws = readMessagesNFC(intent);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        return ws;
+    }
+
+    private String readMessagesNFC(Intent intent) throws UnsupportedEncodingException {
         Parcelable[] rawMsgs =
                 intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
         if (rawMsgs != null && rawMsgs.length > 0) {
             NdefMessage msg = (NdefMessage) rawMsgs[0];
-            String id = new String(msg.getRecords()[0].getPayload());
-            //if size >= 8 taking last 8dig
-            if (id.length() >= 8) {
-                id = id.substring(id.length() - 8, id.length());
-            }
-            showCheckedNfc(id);
-            Effects.getInstance().playSoundShort(Effects.Sound.RIGHT);
-            return id;
+
+            byte[] payload = msg.getRecords()[0].getPayload();
+            String textEncoding = ((payload[0] & 128) == 0) ? "UTF-8" : "UTF-16";
+            int languageCodeLength = 0;
+            String ws = new String(payload, languageCodeLength + 1, payload.length - languageCodeLength - 1, textEncoding);
+            return ws;
         } else {
             showErrorTvNfc("Card with empty value!");
             Effects.getInstance().playSoundShort(Effects.Sound.WRONG);
@@ -176,7 +158,6 @@ public class NfcTagHandler {
                 }
             }
         });
-
     }
 
     public void pause(MainActivity activity) {

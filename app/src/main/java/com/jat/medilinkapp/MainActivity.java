@@ -21,6 +21,7 @@ import com.jat.medilinkapp.backgroudservice.MyIntentServiceVisitPastDay;
 import com.jat.medilinkapp.conf.APIService;
 import com.jat.medilinkapp.conf.ApiUtils;
 import com.jat.medilinkapp.model.entity.NfcData;
+import com.jat.medilinkapp.model.entity.NfcDataTag;
 import com.jat.medilinkapp.nfcconf.NfcTagHandler;
 import com.jat.medilinkapp.util.IRxActionCallBack;
 import com.jat.medilinkapp.util.SharePreferencesUtil;
@@ -79,13 +80,13 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
 
     private NfcTagHandler nfcTagHandler;
     ArrayList<String> listTasks;
-    private String nfc_id;
     NfcDataHistoryViewModel viewModel;
     MyFragmentDialogHistory myDialogHistory;
     private final CompositeDisposable disposables = new CompositeDisposable();
     private SharePreferencesUtil sharePreferencesUtil;
     Disposable disposableVisitHistory;
     Disposable disposableUnSentVisits;
+    private NfcDataTag nfcDataTag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,17 +94,18 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mAPIService = ApiUtils.getAPIService();
-
         nfcTagHandler = new NfcTagHandler();
         nfcTagHandler.init(this);
 
         sharePreferencesUtil = new SharePreferencesUtil(this);
         viewModel = ViewModelProviders.of(this).get(NfcDataHistoryViewModel.class);
 
+        nfcDataTag = new NfcDataTag("","");
+
         //test
         //AsyncTask.execute(() -> viewModel.deleteAll());
         //sharePreferencesUtil.setValue(CHECK_YESTERDAY_UNSENT_VISITS, new SupportUI().getYesterday());
+        checkUnsentVisitsToSendInBackGround();
 
         initUI();
     }
@@ -168,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
-            nfc_id = nfcTagHandler.handleIntent(intent);
+            nfcDataTag = nfcTagHandler.handleIntent(intent);
         }
     }
 
@@ -176,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
         SharePreferencesUtil sharePreferencesUtil = new SharePreferencesUtil(this);
         String dateString = sharePreferencesUtil.getValue(CHECK_YESTERDAY_UNSENT_VISITS, "");
 
-        if (new SupportUI().fromStringToDate(dateString) != new Date()) {
+        if (!dateString.equals(new SupportUI().fromDateToString(new Date()))) {
             viewModel.getListIsSend(false).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
                 @Override
                 public void accept(Disposable d) throws Exception {
@@ -234,7 +236,9 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
                 //nfcData.setCreateDate(yesterday);
             }
 
-            nfcData.setNfc(nfc_id);
+            nfcData.setNfc(nfcDataTag.serialRecord);
+            nfcData.setWs(nfcDataTag.webService);
+
             nfcData.setTasktype(cbOut.isChecked() ? new SupportUI().getFormatDataSendTasks(listTasks) : "");
             nfcData.setAppSender(this.getString(R.string.android_sender));
 
@@ -378,7 +382,7 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
             validate = false;
         }
 
-        if (TextUtils.isEmpty(nfc_id) && !BuildConfig.DEBUG) {
+        if ((TextUtils.isEmpty(nfcDataTag.serialRecord) || TextUtils.isEmpty(nfcDataTag.webService)) && !BuildConfig.DEBUG) {
             tvNfc.setError(this.getString(R.string.field_is_empty));
             tvNfc.setVisibility(View.VISIBLE);
             findViewById(R.id.img_nfc_checked).setVisibility(View.GONE);
@@ -411,11 +415,12 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
 
     private void sendDataPost(NfcData nfcData) {
         //clean nfc from view to force user to use card again after submit
-        nfc_id = "";
+        nfcDataTag.clear();
         cleanTvNfc();
 
         // RxJava
         final Dialog progress = new SupportUI().showProgress(this);
+        mAPIService = ApiUtils.getAPIService(nfcData.getWs());
         mAPIService.sendPost(nfcData)
                 .subscribeOn(rx.schedulers.Schedulers.newThread())
                 .observeOn(rx.schedulers.Schedulers.trampoline())
@@ -483,6 +488,7 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
         }
     }
 
+    //data to resend
     @Override
     public void onFinishSelectionData(@NotNull NfcData nfcData) {
         if (!nfcData.isSend()) {
@@ -499,7 +505,8 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
                 officeid.setText(String.valueOf(nfcData.getOfficeid()));
 
                 nfcTagHandler.showCheckedNfc(nfcData.getNfc());
-                nfc_id = nfcData.getNfc();
+                nfcDataTag.serialRecord = nfcData.getNfc();
+                nfcDataTag.webService = nfcData.getWs();
 
                 if (nfcData.getCalltype().equals(MainActivity.this.getString(R.string.CALLTYPE_IN))) {
                     cbIn.setChecked(true);

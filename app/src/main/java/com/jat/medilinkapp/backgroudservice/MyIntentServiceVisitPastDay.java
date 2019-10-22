@@ -19,7 +19,10 @@ public class MyIntentServiceVisitPastDay extends IntentService {
     }
 
     /**
+     * Starts this service to perform action ACTION_RESEND_VISIT with the given parameters. If
      * the service is already performing a task this action will be queued.
+     *
+     * @see IntentService
      */
     public static void startActionActionResendVisit(Context context, ArrayList<NfcData> list) {
         Intent intent = new Intent(context, MyIntentServiceVisitPastDay.class);

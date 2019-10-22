@@ -291,7 +291,7 @@ public class SupportUI {
         c2.setTime(myDate); // your date
 
         if (c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR)
-                && c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR)) {
+                && c2.get(Calendar.DAY_OF_YEAR) <= c1.get(Calendar.DAY_OF_YEAR)) {
             return true;
         }
         return false;
@@ -299,7 +299,7 @@ public class SupportUI {
 
     public String getYesterday() {
         Calendar c1 = Calendar.getInstance(); // today
-        c1.add(Calendar.DAY_OF_YEAR, -1); // yesterday
+        c1.add(Calendar.DAY_OF_YEAR, -3); // yesterday
         return fromDateToString(c1.getTime());
     }
 

@@ -2,15 +2,12 @@ package com.jat.medilinkapp.model.entity;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
-import java.util.Objects;
-
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+import java.util.Objects;
 
 @Entity(tableName = "NfcData")
 public class NfcData implements Parcelable {
@@ -50,6 +47,9 @@ public class NfcData implements Parcelable {
     @SerializedName("nfc")
     @Expose
     private String nfc;
+
+    @ColumnInfo(name = "ws")
+    private String ws;
 
     @ColumnInfo(name = "office_id")
     @SerializedName("office_id")
@@ -154,6 +154,14 @@ public class NfcData implements Parcelable {
         this.createDate = createDate;
     }
 
+    public String getWs() {
+        return ws;
+    }
+
+    public void setWs(String ws) {
+        this.ws = ws;
+    }
+
     public NfcData() {
     }
 
@@ -164,12 +172,13 @@ public class NfcData implements Parcelable {
         NfcData nfcData = (NfcData) o;
         return getUid() == nfcData.getUid() &&
                 isSend() == nfcData.isSend() &&
-                Objects.equals(createDate, nfcData.createDate) &&
+                Objects.equals(getCreateDate(), nfcData.getCreateDate()) &&
                 Objects.equals(getCalltype(), nfcData.getCalltype()) &&
                 Objects.equals(getClientId(), nfcData.getClientId()) &&
                 Objects.equals(getEmployeeId(), nfcData.getEmployeeId()) &&
                 Objects.equals(getId(), nfcData.getId()) &&
                 Objects.equals(getNfc(), nfcData.getNfc()) &&
+                Objects.equals(getWs(), nfcData.getWs()) &&
                 Objects.equals(getOfficeid(), nfcData.getOfficeid()) &&
                 Objects.equals(getTasktype(), nfcData.getTasktype()) &&
                 Objects.equals(getAppSender(), nfcData.getAppSender());
@@ -177,9 +186,8 @@ public class NfcData implements Parcelable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUid(), isSend(), createDate, getCalltype(), getClientId(), getEmployeeId(), getId(), getNfc(), getOfficeid(), getTasktype(), getAppSender());
+        return Objects.hash(getUid(), isSend(), getCreateDate(), getCalltype(), getClientId(), getEmployeeId(), getId(), getNfc(), getWs(), getOfficeid(), getTasktype(), getAppSender());
     }
-
 
     @Override
     public int describeContents() {
@@ -196,6 +204,7 @@ public class NfcData implements Parcelable {
         dest.writeValue(this.employeeId);
         dest.writeValue(this.id);
         dest.writeString(this.nfc);
+        dest.writeString(this.ws);
         dest.writeValue(this.officeid);
         dest.writeString(this.tasktype);
         dest.writeString(this.appSender);
@@ -210,6 +219,7 @@ public class NfcData implements Parcelable {
         this.employeeId = (Integer) in.readValue(Integer.class.getClassLoader());
         this.id = (Integer) in.readValue(Integer.class.getClassLoader());
         this.nfc = in.readString();
+        this.ws = in.readString();
         this.officeid = (Integer) in.readValue(Integer.class.getClassLoader());
         this.tasktype = in.readString();
         this.appSender = in.readString();

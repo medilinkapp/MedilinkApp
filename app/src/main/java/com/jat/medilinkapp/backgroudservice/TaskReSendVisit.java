@@ -19,7 +19,8 @@ public class TaskReSendVisit {
         this.list = list;
         this.context = context;
         nfcDataRepository = new NfcDataRepository(context);
-        mAPIService = ApiUtils.getAPIService();
+        if(list != null && list.size() > 0)
+        mAPIService = ApiUtils.getAPIService(list.get(0).getWs());
         Log.i(TaskReSendVisit.class.getSimpleName(), "list size: " +list.size());
     }
 
