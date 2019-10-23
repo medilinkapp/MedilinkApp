@@ -305,9 +305,23 @@ public class SupportUI {
         return false;
     }
 
+    public boolean isOldItem(Date myDate) {
+        Calendar c1 = Calendar.getInstance(); // today
+        c1.add(Calendar.DAY_OF_YEAR, -8); // yesterday
+
+        Calendar c2 = Calendar.getInstance();
+        c2.setTime(myDate); // your date
+
+        if (c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR)
+                && c2.get(Calendar.DAY_OF_YEAR) <= c1.get(Calendar.DAY_OF_YEAR)) {
+            return true;
+        }
+        return false;
+    }
+
     public String getYesterday() {
         Calendar c1 = Calendar.getInstance(); // today
-        c1.add(Calendar.DAY_OF_YEAR, -3); // yesterday
+        c1.add(Calendar.DAY_OF_YEAR, -10); // yesterday
         return fromDateToString(c1.getTime());
     }
 

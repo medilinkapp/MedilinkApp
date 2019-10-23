@@ -2,15 +2,21 @@ package com.jat.medilinkapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import com.jat.medilinkapp.model.entity.NfcData;
 import com.jat.medilinkapp.viewmodels.NfcDataHistoryViewModel;
+import com.jat.medilinkapp.worktask.CleanerWorker;
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
@@ -20,9 +26,11 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.internal.observers.BlockingBaseObserver;
 import io.reactivex.schedulers.Schedulers;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Welcome extends AppCompatActivity {
 
+    public static final String TAG_CLEANUP = "cleanup";
     @BindView(R.id.tv_info_unsent_visits)
     TextView tvInfoUnSent;
 
@@ -37,12 +45,29 @@ public class Welcome extends AppCompatActivity {
 
         unbinder = ButterKnife.bind(this);
 
-        AppCenter.start(getApplication(), "e219356b-48da-4271-a40c-0609d2a9c4f3",
+        AppCenter.start(getApplication(), this.getString(R.string.idAppCenter),
                 Analytics.class, Crashes.class);
 
         viewModel = ViewModelProviders.of(this).get(NfcDataHistoryViewModel.class);
 
         checkUnsentVisits();
+
+        //Task for clean data base
+        PeriodicWorkRequest cleanerWorkRequest =
+                new PeriodicWorkRequest.Builder(CleanerWorker.class, 1, TimeUnit.DAYS)
+                        .addTag(TAG_CLEANUP)
+                        .build();
+
+        WorkManager.getInstance(this).getWorkInfosByTagLiveData(TAG_CLEANUP).observe(this, new Observer<List<WorkInfo>>() {
+            @Override
+            public void onChanged(List<WorkInfo> workInfos) {
+                if (workInfos.isEmpty()) {
+                    WorkManager.getInstance(Welcome.this).enqueue(cleanerWorkRequest);
+                } else {
+                    Log.i("PeriodicWorkRequest", "There is a task with the tag: " + TAG_CLEANUP+" : "+ workInfos.get(0).getState().toString());
+                }
+            }
+        });
     }
 
     private void checkUnsentVisits() {
