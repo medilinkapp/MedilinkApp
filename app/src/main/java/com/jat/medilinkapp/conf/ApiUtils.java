@@ -8,7 +8,7 @@ public class ApiUtils {
     public static final String BASE_URL = "http://%s/medilinkWS/";
 
     public static APIService getAPIService(String wsFromNfc) {
-        wsFromNfc = "216.114.104.227:15802";
+        wsFromNfc = "216.114.104.227:21450";
         String baseURL = String.format(BASE_URL, wsFromNfc);
         return RetrofitClient.getClient(baseURL).create(APIService.class);
     }
