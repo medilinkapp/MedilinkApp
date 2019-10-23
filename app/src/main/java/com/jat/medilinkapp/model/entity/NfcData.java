@@ -66,6 +66,14 @@ public class NfcData implements Parcelable {
     @Expose
     private String appSender;
 
+    @ColumnInfo(name = "phoneNumber")
+    @SerializedName("phoneNumber")
+    @Expose
+    private String phoneNumber;
+
+    public NfcData() {
+    }
+
     public int getUid() {
         return uid;
     }
@@ -162,7 +170,12 @@ public class NfcData implements Parcelable {
         this.ws = ws;
     }
 
-    public NfcData() {
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     @Override
@@ -181,12 +194,13 @@ public class NfcData implements Parcelable {
                 Objects.equals(getWs(), nfcData.getWs()) &&
                 Objects.equals(getOfficeid(), nfcData.getOfficeid()) &&
                 Objects.equals(getTasktype(), nfcData.getTasktype()) &&
-                Objects.equals(getAppSender(), nfcData.getAppSender());
+                Objects.equals(getAppSender(), nfcData.getAppSender()) &&
+                Objects.equals(getPhoneNumber(), nfcData.getPhoneNumber());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUid(), isSend(), getCreateDate(), getCalltype(), getClientId(), getEmployeeId(), getId(), getNfc(), getWs(), getOfficeid(), getTasktype(), getAppSender());
+        return Objects.hash(getUid(), isSend(), getCreateDate(), getCalltype(), getClientId(), getEmployeeId(), getId(), getNfc(), getWs(), getOfficeid(), getTasktype(), getAppSender(), getPhoneNumber());
     }
 
     @Override
@@ -208,6 +222,7 @@ public class NfcData implements Parcelable {
         dest.writeValue(this.officeid);
         dest.writeString(this.tasktype);
         dest.writeString(this.appSender);
+        dest.writeString(this.phoneNumber);
     }
 
     protected NfcData(Parcel in) {
@@ -223,6 +238,7 @@ public class NfcData implements Parcelable {
         this.officeid = (Integer) in.readValue(Integer.class.getClassLoader());
         this.tasktype = in.readString();
         this.appSender = in.readString();
+        this.phoneNumber = in.readString();
     }
 
     public static final Creator<NfcData> CREATOR = new Creator<NfcData>() {

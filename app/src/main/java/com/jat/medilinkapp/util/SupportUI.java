@@ -1,12 +1,15 @@
 package com.jat.medilinkapp.util;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -16,6 +19,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import com.jat.medilinkapp.MainActivity;
 import com.jat.medilinkapp.R;
 import com.jat.medilinkapp.model.entity.NfcData;
@@ -37,6 +43,8 @@ public class SupportUI {
     public static final String IN = "In";
     public static final String OUT = "Out";
     public static final DateFormat DATE_TIME_INSTANCE = DateFormat.getDateTimeInstance();
+
+    public static String wantPermission = Manifest.permission.READ_PHONE_STATE;
 
     public void showResponse(MainActivity activity, String titleMsg, String message, boolean success) {
         // custom dialog
@@ -303,5 +311,32 @@ public class SupportUI {
         return fromDateToString(c1.getTime());
     }
 
+    public static void requestPermission(String permission, MainActivity activity) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
+            Toast.makeText(activity, "Phone state permission allows us to get phone number. Please allow it for additional functionality.", Toast.LENGTH_LONG).show();
+        }
+        ActivityCompat.requestPermissions(activity, new String[]{permission}, MainActivity.PERMISSION_REQUEST_CODE);
+    }
+
+    public static boolean checkPermission(String permission, MainActivity activity) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            int result = ContextCompat.checkSelfPermission(activity, permission);
+            if (result == PackageManager.PERMISSION_GRANTED) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    public static String getPhone(Activity activity) {
+        TelephonyManager phoneMgr = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
+        if (ActivityCompat.checkSelfPermission(activity, wantPermission) != PackageManager.PERMISSION_GRANTED) {
+            return "";
+        }
+        return phoneMgr.getLine1Number();
+    }
 
 }

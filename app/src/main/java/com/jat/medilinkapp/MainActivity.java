@@ -2,14 +2,17 @@ package com.jat.medilinkapp;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.nfc.NfcAdapter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -88,6 +91,8 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
     Disposable disposableUnSentVisits;
     private NfcDataTag nfcDataTag;
 
+    public static final int PERMISSION_REQUEST_CODE = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,14 +105,34 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
         sharePreferencesUtil = new SharePreferencesUtil(this);
         viewModel = ViewModelProviders.of(this).get(NfcDataHistoryViewModel.class);
 
-        nfcDataTag = new NfcDataTag("","");
+        nfcDataTag = new NfcDataTag("", "");
 
         //test
         //AsyncTask.execute(() -> viewModel.deleteAll());
         //sharePreferencesUtil.setValue(CHECK_YESTERDAY_UNSENT_VISITS, new SupportUI().getYesterday());
+
+        if (!SupportUI.checkPermission(SupportUI.wantPermission, this)) {
+            SupportUI.requestPermission(SupportUI.wantPermission, this);
+        } else {
+            Log.d(TAG, "Phone number: " + SupportUI.getPhone(this));
+        }
+
         checkUnsentVisitsToSendInBackGround();
 
         initUI();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "Phone number: " + SupportUI.getPhone(this));
+                } else {
+                    Toast.makeText(this, "Permission Denied. We can't get phone number.", Toast.LENGTH_LONG).show();
+                }
+                break;
+        }
     }
 
     private void initUI() {
@@ -235,6 +260,8 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
                 //String yesterday = new SupportUI().getYesterday();
                 //nfcData.setCreateDate(yesterday);
             }
+
+            nfcData.setPhoneNumber(SupportUI.getPhone(this));
 
             nfcData.setNfc(nfcDataTag.serialRecord);
             nfcData.setWs(nfcDataTag.webService);
