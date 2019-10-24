@@ -17,14 +17,12 @@ public class RetrofitClient {
     public static Retrofit getClient(String baseUrl) {
         OkHttpClient client = getOkHttpClient();
 
-        if (retrofit==null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(baseUrl)
                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(client)
                     .build();
-        }
         return retrofit;
     }
 

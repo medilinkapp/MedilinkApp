@@ -19,8 +19,6 @@ public class TaskReSendVisit {
         this.list = list;
         this.context = context;
         nfcDataRepository = new NfcDataRepository(context);
-        if(list != null && list.size() > 0)
-        mAPIService = ApiUtils.getAPIService(list.get(0).getWs());
         Log.i(TaskReSendVisit.class.getSimpleName(), "list size: " +list.size());
     }
 
@@ -34,6 +32,7 @@ public class TaskReSendVisit {
         //delete fromo history to dont duplicate
         nfcDataRepository.delete(nfcData);
         // RxJava post
+        mAPIService = ApiUtils.getAPIService(nfcData.getWs());
         mAPIService.sendPost(nfcData)
                 .subscribeOn(rx.schedulers.Schedulers.newThread())
                 .observeOn(rx.schedulers.Schedulers.trampoline())
