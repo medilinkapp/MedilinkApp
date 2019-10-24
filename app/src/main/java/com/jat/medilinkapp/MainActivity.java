@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
@@ -187,15 +188,32 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
         clientid.setText(sharePreferencesUtil.getValue(CLIENTID_PREFERENCE, ""));
         officeid.setText(sharePreferencesUtil.getValue(OFFICEID_PREFERENCE, ""));
 
-        if(TextUtils.isEmpty(clientid.getText().toString())){
+        clearFocus(employeeid,clientid,officeid);
+
+        if (TextUtils.isEmpty(clientid.getText().toString())) {
             employeeid.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         }
-        if(TextUtils.isEmpty(officeid.getText().toString())){
+        if (TextUtils.isEmpty(officeid.getText().toString())) {
             clientid.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         }
 
         if (BuildConfig.DEBUG) {
             // btHistory.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void clearFocus(EditText... editTexts) {
+        for (EditText e : editTexts) {
+            e.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        //Clear focus here from edittext
+                        e.clearFocus();
+                    }
+                    return false;
+                }
+            });
         }
     }
 
