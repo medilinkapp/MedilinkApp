@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -185,6 +186,13 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
         employeeid.setText(sharePreferencesUtil.getValue(EMPLOYEEID_PREFERENCE, ""));
         clientid.setText(sharePreferencesUtil.getValue(CLIENTID_PREFERENCE, ""));
         officeid.setText(sharePreferencesUtil.getValue(OFFICEID_PREFERENCE, ""));
+
+        if(TextUtils.isEmpty(clientid.getText().toString())){
+            employeeid.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+        }
+        if(TextUtils.isEmpty(officeid.getText().toString())){
+            clientid.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+        }
 
         if (BuildConfig.DEBUG) {
             // btHistory.setVisibility(View.VISIBLE);
@@ -490,6 +498,10 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
     protected void onResume() {
         super.onResume();
         nfcTagHandler.resume(this);
+        View view = findViewById(R.id.focus_layout);
+        if (view != null) {
+            view.requestFocus();
+        }
         //checkUnsentVisitsToSendInBackGround();
     }
 
