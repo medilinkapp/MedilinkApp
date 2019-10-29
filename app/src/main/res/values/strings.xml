@@ -32,4 +32,5 @@
     <string name="information">Information</string>
     <string name="message_sending_past_visit_background">We are sending %d past visits in background.</string>
     <string name="idAppCenter">e219356b-48da-4271-a40c-0609d2a9c4f3</string>
+    <string name="exit">Exit</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.jat.medilinkapp.conf;
+package com.jat.medilinkapp.retro_conf;
 
 public class ApiUtils {
     private ApiUtils() {

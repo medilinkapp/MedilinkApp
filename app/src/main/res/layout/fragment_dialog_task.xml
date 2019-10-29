@@ -60,7 +60,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/indent_xxlarge"
-            android:text="Done" />
+            android:textSize="20sp"
+            android:background="@color/hl_green_color2"
+            android:text="@string/exit" />
 
 
     </LinearLayout>

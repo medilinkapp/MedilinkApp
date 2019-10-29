@@ -1,4 +1,4 @@
-package com.jat.medilinkapp.conf;
+package com.jat.medilinkapp.retro_conf;
 
 import com.jat.medilinkapp.model.entity.NfcData;
 

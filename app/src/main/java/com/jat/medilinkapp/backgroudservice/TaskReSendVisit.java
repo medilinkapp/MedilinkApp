@@ -2,8 +2,8 @@ package com.jat.medilinkapp.backgroudservice;
 
 import android.content.Context;
 import android.util.Log;
-import com.jat.medilinkapp.conf.APIService;
-import com.jat.medilinkapp.conf.ApiUtils;
+import com.jat.medilinkapp.retro_conf.APIService;
+import com.jat.medilinkapp.retro_conf.ApiUtils;
 import com.jat.medilinkapp.model.NfcDataRepository;
 import com.jat.medilinkapp.model.entity.NfcData;
 import java.util.ArrayList;

@@ -23,11 +23,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.jat.medilinkapp.backgroudservice.MyIntentServiceVisitPastDay;
-import com.jat.medilinkapp.conf.APIService;
-import com.jat.medilinkapp.conf.ApiUtils;
 import com.jat.medilinkapp.model.entity.NfcData;
 import com.jat.medilinkapp.model.entity.NfcDataTag;
 import com.jat.medilinkapp.nfcconf.NfcTagHandler;
+import com.jat.medilinkapp.retro_conf.APIService;
+import com.jat.medilinkapp.retro_conf.ApiUtils;
 import com.jat.medilinkapp.util.IRxActionCallBack;
 import com.jat.medilinkapp.util.SharePreferencesUtil;
 import com.jat.medilinkapp.util.SupportUI;
@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
     public static final String EMPLOYEEID_PREFERENCE = "employeeid";
     public static final String OFFICEID_PREFERENCE = "officeid";
     public static final String CLIENTID_PREFERENCE = "clientid";
+    public static final String LAST_TASK_LIST_PREFERENCE = "last_task_list";
     public static final String CHECK_YESTERDAY_UNSENT_VISITS = "CHECK_YESTERDAY_UNSENT_VISITS";
     private String TAG = "MEDILINK TAG";
     private APIService mAPIService;
@@ -146,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
 
             cbIn.setError(null);
             cbOut.setError(null);
+            SupportUI.hideKeyboard(MainActivity.this);
         });
 
         cbOut.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -155,6 +157,7 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
             }
             cbIn.setError(null);
             cbOut.setError(null);
+            SupportUI.hideKeyboard(MainActivity.this);
         });
 
         employeeid.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -188,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
         clientid.setText(sharePreferencesUtil.getValue(CLIENTID_PREFERENCE, ""));
         officeid.setText(sharePreferencesUtil.getValue(OFFICEID_PREFERENCE, ""));
 
-        clearFocus(employeeid,clientid,officeid);
+        clearFocus(employeeid, clientid, officeid);
 
         if (TextUtils.isEmpty(clientid.getText().toString())) {
             employeeid.setImeOptions(EditorInfo.IME_ACTION_NEXT);
@@ -196,6 +199,8 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
         if (TextUtils.isEmpty(officeid.getText().toString())) {
             clientid.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         }
+
+        officeid.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
         if (BuildConfig.DEBUG) {
             // btHistory.setVisibility(View.VISIBLE);
@@ -209,7 +214,12 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                         //Clear focus here from edittext
-                        e.clearFocus();
+                        //e.clearFocus();
+                        View view = findViewById(R.id.focus_layout);
+                        if (view != null) {
+                            view.requestFocus();
+                        }
+                        SupportUI.hideKeyboard(MainActivity.this);
                     }
                     return false;
                 }
@@ -381,6 +391,16 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
         bundle.putBoolean(NOT_ALERT_DIALOG, true);
         if (listTasks != null) {
             bundle.putStringArrayList(LIST, listTasks);
+        } else {
+
+            String value = new SharePreferencesUtil(this).getValue(LAST_TASK_LIST_PREFERENCE,
+                    "");
+            if (!TextUtils.isEmpty(value)) {
+                ArrayList<String> listTasksFromSring = SupportUI.getListTasksFromSring(
+                        value,
+                        ",");
+                bundle.putStringArrayList(LIST, listTasksFromSring);
+            }
         }
         dialogFragment.setArguments(bundle);
 
@@ -539,6 +559,9 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
             }
             tvTasks.setText(taskString.substring(1));
             tvTasks.setError(null);
+
+            SharePreferencesUtil sharePreferencesUtil = new SharePreferencesUtil(this);
+            sharePreferencesUtil.setValue(LAST_TASK_LIST_PREFERENCE, taskString.substring(1));
         } else {
             tvTasks.setText("");
             tvTasks.setError(this.getString(R.string.field_is_empty));

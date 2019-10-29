@@ -155,6 +155,15 @@ public class SupportUI {
         return "";
     }
 
+    public static ArrayList<String> getListTasksFromSring(String sList, String separate) {
+        ArrayList<String> list_tast = new ArrayList();
+        for (String item : sList.split(separate)) {
+            list_tast.add(item);
+        }
+
+        return list_tast;
+    }
+
 
     public void showResentDialog(MainActivity activity, ISingleActionCallBack iSingleActionCallBack, NfcData nfcData) {
         // custom dialog
@@ -269,6 +278,15 @@ public class SupportUI {
         mEtSearch.requestFocus();
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        View view = activity.getCurrentFocus();
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     public Date fromStringToDate(String sDate) {
