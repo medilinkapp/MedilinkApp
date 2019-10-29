@@ -399,6 +399,7 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
                 ArrayList<String> listTasksFromSring = SupportUI.getListTasksFromSring(
                         value,
                         ",");
+                listTasks = listTasksFromSring;
                 bundle.putStringArrayList(LIST, listTasksFromSring);
             }
         }
@@ -456,7 +457,7 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
             validate = false;
         }
 
-        if ((TextUtils.isEmpty(nfcDataTag.serialRecord) || TextUtils.isEmpty(nfcDataTag.webService)) && !BuildConfig.DEBUG) {
+        if ((TextUtils.isEmpty(nfcDataTag.serialRecord) || TextUtils.isEmpty(nfcDataTag.webService))) {
             tvNfc.setError(this.getString(R.string.field_is_empty));
             tvNfc.setVisibility(View.VISIBLE);
             findViewById(R.id.img_nfc_checked).setVisibility(View.GONE);

@@ -44,6 +44,7 @@ public class NfcTagHandler {
 
         if (nfc_adapter == null) {
             showErrorTvNfc("NFC not supported");
+            new SupportUI().showResponse(activity, "Error - NFC not supported", "There is a issue with your Nfc device.", false);
         } else {
             if (!nfc_adapter.isEnabled()) {
                 //showErrorTvNfc("NFC is disabled");
@@ -144,25 +145,31 @@ public class NfcTagHandler {
 
     public void resume(MainActivity activity) {
         Log.d(TAG, "resume()");
-        nfc_adapter.enableForegroundDispatch(
-                activity,
-                pending_intent,
-                write_tag_filters,
-                null);
-        new SupportUI().verifyIfNfcOn(activity, new ISingleActionCallBack() {
-            @Override
-            public void callBack() {
-                if (nfc_adapter.isEnabled() && TextUtils.isEmpty(nfc_text.getText())) {
-                    nfc_text.setText(activity.getString(R.string.nfc_default_message));
-                    nfc_text.setError(null);
+        if (nfc_adapter != null) {
+            nfc_adapter.enableForegroundDispatch(
+                    activity,
+                    pending_intent,
+                    write_tag_filters,
+                    null);
+
+            new SupportUI().verifyIfNfcOn(activity, new ISingleActionCallBack() {
+                @Override
+                public void callBack() {
+                    if (nfc_adapter.isEnabled() && TextUtils.isEmpty(nfc_text.getText())) {
+                        nfc_text.setText(activity.getString(R.string.nfc_default_message));
+                        nfc_text.setError(null);
+                    }
                 }
-            }
-        });
+            });
+        } else {
+        }
     }
 
     public void pause(MainActivity activity) {
         Log.d(TAG, "pause()");
-        nfc_adapter.disableForegroundDispatch(activity);
+        if (nfc_adapter != null) {
+            nfc_adapter.disableForegroundDispatch(activity);
+        }
     }
 
     public void showErrorTvNfc(String s) {
