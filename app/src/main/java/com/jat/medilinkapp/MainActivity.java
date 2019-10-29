@@ -399,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
                 ArrayList<String> listTasksFromSring = SupportUI.getListTasksFromSring(
                         value,
                         ",");
-                listTasks = listTasksFromSring;
+                onFinishEditDialog(listTasksFromSring);
                 bundle.putStringArrayList(LIST, listTasksFromSring);
             }
         }
