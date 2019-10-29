@@ -344,10 +344,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="1dp"
-            android:layout_marginLeft="1dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="1dp"
-            android:layout_marginRight="1dp"
             android:gravity="center"
             android:orientation="vertical"
             android:visibility="gone"
@@ -366,6 +364,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:typeface="normal"
+                android:visibility="gone"
                 app:fontFamily="sans-serif-smallcaps"
                 tools:text="45,25,1" />
 
@@ -375,7 +374,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:animateLayoutChanges="true"
-                android:text="@string/label_add_tasks" />
+                android:text="@string/label_add_tasks"
+                android:textSize="18sp" />
 
             <FrameLayout
                 android:id="@+id/framelayout_tasks"

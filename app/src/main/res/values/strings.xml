@@ -22,7 +22,7 @@
     <string name="out">OUT</string>
     <string name="in">IN</string>
     <string name="label_nfc">NFC</string>
-    <string name="label_add_tasks">Add Tasks</string>
+    <string name="label_add_tasks">Add/Check Tasks</string>
     <string name="view_history_visits">View History Visits</string>
     <string name="duplicate_visit">Duplicate Visit</string>
     <string name="message_duplicate_visit">STOP! This visit appears to be a duplicate. Please view your history log.</string>
