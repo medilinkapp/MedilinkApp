@@ -49,20 +49,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:background="@color/TransparentGreyComment"
+                android:layout_marginStart="@dimen/indent_medium"
+                android:textSize="20sp"
                 android:text="Add" />
+
+            <Button
+                android:id="@+id/btnDone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/indent_medium"
+                android:background="@color/hl_green_color2"
+                android:text="@string/save"
+                android:textSize="20sp" />
 
 
         </LinearLayout>
 
 
-        <Button
-            android:id="@+id/btnDone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/indent_xxlarge"
-            android:textSize="20sp"
-            android:background="@color/hl_green_color2"
-            android:text="@string/exit" />
+
 
 
     </LinearLayout>
