@@ -18,6 +18,8 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
@@ -57,9 +59,10 @@ public class SupportUI {
         // Setting dialogview
         Window window = dialogWF.getWindow();
         WindowManager.LayoutParams wlp = window.getAttributes();
-        wlp.gravity = Gravity.CENTER;
+        wlp.gravity = Gravity.CENTER_VERTICAL;
         // wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         window.setAttributes(wlp);
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
         TextView tvTitle = dialogWF.findViewById(R.id.tv_title_layout);
         TextView tvTitleMessage = dialogWF.findViewById(R.id.tv_title_message);
@@ -101,6 +104,8 @@ public class SupportUI {
         wlp.gravity = Gravity.CENTER;
         // wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         window.setAttributes(wlp);
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
 
         TextView tv_msg_bible = dialogWF.findViewById(R.id.tv_msg_dialog);
         tv_msg_bible.setText("Request is being processed.");
@@ -177,6 +182,8 @@ public class SupportUI {
         Window window = dialogWF.getWindow();
         WindowManager.LayoutParams wlp = window.getAttributes();
         wlp.gravity = Gravity.CENTER;
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
         // wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         window.setAttributes(wlp);
 
@@ -233,6 +240,8 @@ public class SupportUI {
         wlp.gravity = Gravity.CENTER;
         // wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         window.setAttributes(wlp);
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
 
         TextView tvTitle = dialogWF.findViewById(R.id.tv_title_layout);
         TextView tvTitleMessage = dialogWF.findViewById(R.id.tv_title_message);

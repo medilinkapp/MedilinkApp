@@ -452,6 +452,7 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
         }
         if (TextUtils.isEmpty(tvTasks.getText().toString()) && cbOut.isChecked()) {
             tvTasks.setError(this.getString(R.string.field_is_empty));
+            new SupportUI().showResponse(MainActivity.this, "Error - Task", "You must select a task.", false);
             validate = false;
         }
 
@@ -459,6 +460,7 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
             tvNfc.setError(this.getString(R.string.field_is_empty));
             tvNfc.setVisibility(View.VISIBLE);
             findViewById(R.id.img_nfc_checked).setVisibility(View.GONE);
+            new SupportUI().showResponse(MainActivity.this, "Error - Nfc Card", "You must scan your Card.", false);
             validate = false;
         }
 

@@ -49,7 +49,7 @@
             android:layout_marginTop="@dimen/indent_medium"
             android:text="Electronic visit verification"
             android:textColor="@color/blue_donation"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:typeface="normal"
             app:fontFamily="sans-serif-smallcaps">
@@ -61,8 +61,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/indent_xlarge"
-            android:text="Log Visit"
-            android:textSize="18sp"
+            android:text="@string/enter_visit"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
     </LinearLayout>
@@ -110,7 +110,7 @@
             android:layout_margin="@dimen/indent_medium"
             android:gravity="center"
             android:textAlignment="center"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:typeface="normal"
             app:fontFamily="sans-serif-smallcaps"
