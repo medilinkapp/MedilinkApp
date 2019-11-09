@@ -46,7 +46,7 @@ public class CleanerWorker extends Worker {
                     int count = list.size();
                     ArrayList<NfcData> oldItems = new ArrayList<>();
                     for (NfcData item : list) {
-                        if (supportUI.isOldItem(supportUI.fromStringToDate(item.createDate))) {
+                        if (supportUI.isOldItem(supportUI.fromStringToDate(item.getCreateDate()))) {
                             oldItems.add(item);
                         }
                     }

@@ -19,7 +19,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
@@ -34,9 +33,11 @@ import io.reactivex.disposables.Disposable;
 import java.net.InetAddress;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class SupportUI {
@@ -85,6 +86,43 @@ public class SupportUI {
             } else {
                 dialogWF.dismiss();
             }
+        });
+        dialogWF.show();
+    }
+
+
+    public void showError(Context context, String titleMsg, String message, boolean success) {
+        // custom dialog
+        final Dialog dialogWF;
+        dialogWF = new Dialog(context, R.style.dialogStyle);
+        dialogWF.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogWF.setContentView(R.layout.dialog_info);
+        dialogWF.setCanceledOnTouchOutside(false);
+        dialogWF.setCancelable(false);
+        // Setting dialogview
+        Window window = dialogWF.getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+        wlp.gravity = Gravity.CENTER_VERTICAL;
+        // wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        window.setAttributes(wlp);
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        TextView tvTitle = dialogWF.findViewById(R.id.tv_title_layout);
+        TextView tvTitleMessage = dialogWF.findViewById(R.id.tv_title_message);
+        TextView tvMsgDialog = dialogWF.findViewById(R.id.tv_msg_dialog);
+        Button btOK = dialogWF.findViewById(R.id.bt_ok);
+
+        tvTitleMessage.setText(titleMsg);
+        tvMsgDialog.setText(message);
+
+        if (success) {
+            tvTitle.setTextColor(Color.GREEN);
+        } else {
+            tvTitle.setTextColor(Color.RED);
+        }
+
+        btOK.setOnClickListener(v -> {
+                dialogWF.dismiss();
         });
         dialogWF.show();
     }
@@ -378,6 +416,39 @@ public class SupportUI {
             return "";
         }
         return phoneMgr.getLine1Number();
+    }
+
+    public static boolean validatePassword(String password) {
+        boolean valid = false;
+        if (password.length() >= 6 || password.length() <= 6) {
+            return valid;
+        } else {
+            valid = true;
+            if (password.charAt(0) != getDigit("yyyy").charAt(3)) {
+                valid = false;
+            }
+            if (password.charAt(1) != getDigit("MM").charAt(1)) {
+                valid = false;
+            }
+            if (password.charAt(2) != getDigit("dd").charAt(1)) {
+                valid = false;
+            }
+            if (password.charAt(3) != getDigit("HH").charAt(1)) {
+                valid = false;
+            }
+            int minuteFromPassword = Integer.parseInt(String.valueOf(password.charAt(4)) + String.valueOf(password.charAt(5)));
+            int minuteNow = Integer.parseInt(getDigit("mm"));
+            if (minuteNow - minuteFromPassword > 5) {
+                valid = false;
+            }
+        }
+        return valid;
+    }
+
+    private static String getDigit(String patter) {
+        SimpleDateFormat format = new SimpleDateFormat(patter, Locale.US);
+        Date date = new Date();
+        return format.format(date);
     }
 
 }

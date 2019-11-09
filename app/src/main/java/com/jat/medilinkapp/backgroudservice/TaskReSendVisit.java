@@ -32,7 +32,7 @@ public class TaskReSendVisit {
         //delete fromo history to dont duplicate
         nfcDataRepository.delete(nfcData);
         // RxJava post
-        mAPIService = ApiUtils.getAPIService(nfcData.getWs());
+        mAPIService = ApiUtils.INSTANCE.getApiService();
         mAPIService.sendPost(nfcData)
                 .subscribeOn(rx.schedulers.Schedulers.newThread())
                 .observeOn(rx.schedulers.Schedulers.trampoline())

@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Objects;
 
 @Entity(tableName = "NfcData")
-public class NfcData implements Parcelable {
+public class NfcData2 implements Parcelable {
 
     @PrimaryKey(autoGenerate = true)
     private int uid;
@@ -21,7 +21,7 @@ public class NfcData implements Parcelable {
     @ColumnInfo(name = "created_date")
     @SerializedName("created_date")
     @Expose
-    public String createDate;
+    private String createDate;
 
     @ColumnInfo(name = "calltype")
     @SerializedName("calltype")
@@ -71,7 +71,12 @@ public class NfcData implements Parcelable {
     @Expose
     private String phoneNumber;
 
-    public NfcData() {
+    @ColumnInfo(name = "gps")
+    @SerializedName("gps")
+    @Expose
+    private String gps;
+
+    public NfcData2() {
     }
 
     public int getUid() {
@@ -178,11 +183,19 @@ public class NfcData implements Parcelable {
         this.phoneNumber = phoneNumber;
     }
 
+    public String getGps() {
+        return gps;
+    }
+
+    public void setGps(String gps) {
+        this.gps = gps;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof NfcData)) return false;
-        NfcData nfcData = (NfcData) o;
+        if (!(o instanceof NfcData2)) return false;
+        NfcData2 nfcData = (NfcData2) o;
         return getUid() == nfcData.getUid() &&
                 isSend() == nfcData.isSend() &&
                 Objects.equals(getCreateDate(), nfcData.getCreateDate()) &&
@@ -225,7 +238,7 @@ public class NfcData implements Parcelable {
         dest.writeString(this.phoneNumber);
     }
 
-    protected NfcData(Parcel in) {
+    protected NfcData2(Parcel in) {
         this.uid = in.readInt();
         this.isSend = in.readByte() != 0;
         this.createDate = in.readString();
@@ -241,15 +254,15 @@ public class NfcData implements Parcelable {
         this.phoneNumber = in.readString();
     }
 
-    public static final Creator<NfcData> CREATOR = new Creator<NfcData>() {
+    public static final Creator<NfcData2> CREATOR = new Creator<NfcData2>() {
         @Override
-        public NfcData createFromParcel(Parcel source) {
-            return new NfcData(source);
+        public NfcData2 createFromParcel(Parcel source) {
+            return new NfcData2(source);
         }
 
         @Override
-        public NfcData[] newArray(int size) {
-            return new NfcData[size];
+        public NfcData2[] newArray(int size) {
+            return new NfcData2[size];
         }
     };
 }
