@@ -382,7 +382,7 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
                             } else {
                                 boolean send = true;
                                 for (NfcData item : nfcDatas) {
-                                    long min = supportUI.diffMinutesDateTimes(
+                                    long min = SupportUI.diffMinutesDateTimes(
                                             supportUI.fromStringToDate(item.getCreateDate()),
                                             supportUI.fromStringToDate(nfcData.getCreateDate()));
                                     if (min < ConfigValuesApp.MINUTES_WAIT_TO_SEND_AGAIN &&

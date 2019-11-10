@@ -350,7 +350,7 @@ public class SupportUI {
         return DATE_TIME_INSTANCE.format(date);
     }
 
-    public long diffMinutesDateTimes(Date dateStart, Date dateEnd) {
+    public static long diffMinutesDateTimes(Date dateStart, Date dateEnd) {
         long diffInMillisec = dateEnd.getTime() - dateStart.getTime();
         long diffInMin = TimeUnit.MILLISECONDS.toMinutes(diffInMillisec);
         return diffInMin;
@@ -420,7 +420,7 @@ public class SupportUI {
 
     public static boolean validatePassword(String password) {
         boolean valid = false;
-        if (password.length() >= 6 || password.length() <= 6) {
+        if (password.length() > 6 || password.length() < 6) {
             return valid;
         } else {
             valid = true;
@@ -437,8 +437,15 @@ public class SupportUI {
                 valid = false;
             }
             int minuteFromPassword = Integer.parseInt(String.valueOf(password.charAt(4)) + String.valueOf(password.charAt(5)));
-            int minuteNow = Integer.parseInt(getDigit("mm"));
-            if (minuteNow - minuteFromPassword > 5) {
+
+            Calendar calendarMinutePassword = Calendar.getInstance();
+            calendarMinutePassword.set(Calendar.MINUTE,minuteFromPassword);
+
+            Calendar calendarNow = Calendar.getInstance();
+
+            long diffMinutesDateTimes = diffMinutesDateTimes(calendarMinutePassword.getTime(), calendarNow.getTime());
+
+            if (diffMinutesDateTimes  > 5  || diffMinutesDateTimes  < 0 ) {
                 valid = false;
             }
         }
@@ -449,6 +456,14 @@ public class SupportUI {
         SimpleDateFormat format = new SimpleDateFormat(patter, Locale.US);
         Date date = new Date();
         return format.format(date);
+    }
+
+    public static String getPassword(){
+        return String.valueOf(getDigit("yyyy").charAt(3))+
+                String.valueOf(getDigit("MM").charAt(1))+
+                String.valueOf(getDigit("dd").charAt(1))+
+                String.valueOf(getDigit("HH").charAt(1))+
+                String.valueOf(getDigit("mm"));
     }
 
 }
