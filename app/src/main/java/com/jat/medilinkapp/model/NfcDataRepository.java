@@ -13,11 +13,11 @@ public class NfcDataRepository {
     private MyDataBase appDatabase;
 
     public NfcDataRepository(@NonNull Application application) {
-        appDatabase = MyDataBase.getDatabase(application);
+        appDatabase = MyDataBase.Companion.getDatabase(application);
     }
 
     public NfcDataRepository(@NonNull Context application) {
-        appDatabase = MyDataBase.getDatabase(application);
+        appDatabase = MyDataBase.Companion.getDatabase(application);
     }
 
     public Observable<List<NfcData>> getList() {

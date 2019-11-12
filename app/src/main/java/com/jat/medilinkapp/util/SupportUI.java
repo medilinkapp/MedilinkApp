@@ -91,7 +91,7 @@ public class SupportUI {
     }
 
 
-    public void showError(Context context, String titleMsg, String message, boolean success) {
+    public void showDialogInfoUser(Context context, String titleMsg, String message, boolean success, ISingleActionCallBack callBack ) {
         // custom dialog
         final Dialog dialogWF;
         dialogWF = new Dialog(context, R.style.dialogStyle);
@@ -122,7 +122,10 @@ public class SupportUI {
         }
 
         btOK.setOnClickListener(v -> {
-                dialogWF.dismiss();
+            if (callBack != null) {
+                callBack.callBack();
+            }
+            dialogWF.dismiss();
         });
         dialogWF.show();
     }
@@ -208,10 +211,10 @@ public class SupportUI {
     }
 
 
-    public void showResentDialog(MainActivity activity, ISingleActionCallBack iSingleActionCallBack, NfcData nfcData) {
+    public void showResentDialog(Context context, ISingleActionCallBack iSingleActionCallBack, NfcData nfcData) {
         // custom dialog
         final Dialog dialogWF;
-        dialogWF = new Dialog(activity, R.style.dialogStyle);
+        dialogWF = new Dialog(context, R.style.dialogStyle);
         dialogWF.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogWF.setContentView(R.layout.dialog_resent);
         dialogWF.setCanceledOnTouchOutside(false);
@@ -235,7 +238,7 @@ public class SupportUI {
         tvEmployee.setText(String.valueOf(nfcData.getEmployeeId()));
         tvClient.setText(String.valueOf(nfcData.getClientId()));
         tvOffice.setText(String.valueOf(nfcData.getOfficeid()));
-        tvInOut.setText(nfcData.getCalltype().equals(activity.getString(R.string.CALLTYPE_IN)) ? IN : OUT);
+        tvInOut.setText(nfcData.getCalltype().equals(context.getString(R.string.CALLTYPE_IN)) ? IN : OUT);
         if (nfcData.getCalltype().equals("I")) {
             dialogWF.findViewById(R.id.tv_label_tasks).setVisibility(View.GONE);
             tvTasks.setVisibility(View.GONE);
@@ -439,13 +442,13 @@ public class SupportUI {
             int minuteFromPassword = Integer.parseInt(String.valueOf(password.charAt(4)) + String.valueOf(password.charAt(5)));
 
             Calendar calendarMinutePassword = Calendar.getInstance();
-            calendarMinutePassword.set(Calendar.MINUTE,minuteFromPassword);
+            calendarMinutePassword.set(Calendar.MINUTE, minuteFromPassword);
 
             Calendar calendarNow = Calendar.getInstance();
 
             long diffMinutesDateTimes = diffMinutesDateTimes(calendarMinutePassword.getTime(), calendarNow.getTime());
 
-            if (diffMinutesDateTimes  > 5  || diffMinutesDateTimes  < 0 ) {
+            if (diffMinutesDateTimes > 5 || diffMinutesDateTimes < 0) {
                 valid = false;
             }
         }
@@ -458,11 +461,11 @@ public class SupportUI {
         return format.format(date);
     }
 
-    public static String getPassword(){
-        return String.valueOf(getDigit("yyyy").charAt(3))+
-                String.valueOf(getDigit("MM").charAt(1))+
-                String.valueOf(getDigit("dd").charAt(1))+
-                String.valueOf(getDigit("HH").charAt(1))+
+    public static String getPassword() {
+        return String.valueOf(getDigit("yyyy").charAt(3)) +
+                String.valueOf(getDigit("MM").charAt(1)) +
+                String.valueOf(getDigit("dd").charAt(1)) +
+                String.valueOf(getDigit("HH").charAt(1)) +
                 String.valueOf(getDigit("mm"));
     }
 

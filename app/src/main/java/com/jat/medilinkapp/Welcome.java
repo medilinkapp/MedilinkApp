@@ -14,16 +14,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import com.jat.medilinkapp.model.entity.NfcData;
 import com.jat.medilinkapp.viewmodels.NfcDataHistoryViewModel;
 import com.jat.medilinkapp.worktask.CleanerWorker;
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.internal.observers.BlockingBaseObserver;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -36,7 +33,7 @@ public class Welcome extends AppCompatActivity {
 
     Unbinder unbinder;
     NfcDataHistoryViewModel viewModel;
-    Disposable disposable;
+    CompositeDisposable disposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,30 +61,20 @@ public class Welcome extends AppCompatActivity {
                 if (workInfos.isEmpty()) {
                     WorkManager.getInstance(Welcome.this).enqueue(cleanerWorkRequest);
                 } else {
-                    Log.i("PeriodicWorkRequest", "There is a task with the tag: " + TAG_CLEANUP+" : "+ workInfos.get(0).getState().toString());
+                    Log.i("PeriodicWorkRequest", "There is a task with the tag: " + TAG_CLEANUP + " : " + workInfos.get(0).getState().toString());
                 }
             }
         });
     }
 
     private void checkUnsentVisits() {
-        viewModel.getListIsSend(false).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
-            @Override
-            public void accept(Disposable d) throws Exception {
-                disposable = d;
-            }
-        }).subscribe(new BlockingBaseObserver<List<NfcData>>() {
-            @Override
-            public void onNext(List<NfcData> nfcData) {
-                int count = nfcData.size();
-                tvInfoUnSent.setText(String.format(Welcome.this.getString(R.string.count_message_visits_unsent), count));
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-        });
+        disposable.add(viewModel.getListIsSend(false).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(nfcData -> {
+                            int count = nfcData.size();
+                            tvInfoUnSent.setText(String.format(Welcome.this.getString(R.string.count_message_visits_unsent), count));
+                        }
+                )
+        );
     }
 
     @OnClick(R.id.bt_log_visit)
@@ -99,7 +86,7 @@ public class Welcome extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        disposable.dispose();
+        disposable.clear();
         unbinder.unbind();
     }
 }

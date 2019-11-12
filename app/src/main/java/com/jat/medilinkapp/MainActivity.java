@@ -29,16 +29,14 @@ import com.jat.medilinkapp.retro_conf.ApiUtils;
 import com.jat.medilinkapp.util.IRxActionCallBack;
 import com.jat.medilinkapp.util.SharePreferencesUtil;
 import com.jat.medilinkapp.util.SupportUI;
+import com.jat.medilinkapp.viewmodels.ClientGpsViewModal;
 import com.jat.medilinkapp.viewmodels.NfcDataHistoryViewModel;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.internal.observers.BlockingBaseObserver;
 import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.jetbrains.annotations.NotNull;
 
 public class MainActivity extends AppCompatActivity implements MyFragmentDialogTasks.DialogListener, MyFragmentDialogHistory.DialogListener {
@@ -84,14 +82,15 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
     @BindView(R.id.bt_history)
     View btHistory;
 
+    NfcDataHistoryViewModel nfcDataHistoryViewModel;
+    ClientGpsViewModal clientGpsViewModal;
+
     //private NfcTagHandler nfcTagHandler;
     ArrayList<String> listTasks;
-    NfcDataHistoryViewModel viewModel;
+
     MyFragmentDialogHistory myDialogHistory;
     private final CompositeDisposable disposables = new CompositeDisposable();
     private SharePreferencesUtil sharePreferencesUtil;
-    Disposable disposableVisitHistory;
-    Disposable disposableUnSentVisits;
 
     //No more in use
     //private NfcDataTag nfcDataTag;
@@ -108,12 +107,13 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
         //nfcTagHandler.init(this);
 
         sharePreferencesUtil = new SharePreferencesUtil(this);
-        viewModel = ViewModelProviders.of(this).get(NfcDataHistoryViewModel.class);
+        nfcDataHistoryViewModel = ViewModelProviders.of(this).get(NfcDataHistoryViewModel.class);
+        clientGpsViewModal = ViewModelProviders.of(this).get(ClientGpsViewModal.class);
 
         //nfcDataTag = new NfcDataTag("", "");
 
         //test
-        //AsyncTask.execute(() -> viewModel.deleteAll());
+        //AsyncTask.execute(() -> nfcDataHistoryViewModel.deleteAll());
         //sharePreferencesUtil.setValue(CHECK_YESTERDAY_UNSENT_VISITS, new SupportUI().getYesterday());
 
         if (!SupportUI.checkPermission(SupportUI.wantPermission, this)) {
@@ -251,39 +251,34 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
         String dateString = sharePreferencesUtil.getValue(CHECK_YESTERDAY_UNSENT_VISITS, "");
 
         if (!dateString.equals(new SupportUI().fromDateToString(new Date()))) {
-            viewModel.getListIsSend(false).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
-                @Override
-                public void accept(Disposable d) throws Exception {
-                    disposableUnSentVisits = d;
-                }
-            }).subscribe(new BlockingBaseObserver<List<NfcData>>() {
-                @Override
-                public void onNext(List<NfcData> list) {
-                    if (!list.isEmpty()) {
-                        SupportUI supportUI = new SupportUI();
-                        int count = list.size();
-                        ArrayList<NfcData> yesterdayList = new ArrayList<>();
-                        for (NfcData item : list) {
-                            if (supportUI.isYesterday(supportUI.fromStringToDate(item.getCreateDate()))) {
-                                yesterdayList.add(item);
-                            }
-                        }
-                        if (!yesterdayList.isEmpty()) {
-                            supportUI.showDialogInfo(MainActivity.this,
-                                    MainActivity.this.getString(R.string.information),
-                                    String.format(MainActivity.this.getString(R.string.message_sending_past_visit_background), yesterdayList.size()));
+            disposables.add(
+                    nfcDataHistoryViewModel.getListIsSend(false)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(list -> {
+                                        if (!list.isEmpty()) {
+                                            SupportUI supportUI = new SupportUI();
+                                            int count = list.size();
+                                            ArrayList<NfcData> yesterdayList = new ArrayList<>();
+                                            for (NfcData item : list) {
+                                                if (supportUI.isYesterday(supportUI.fromStringToDate(item.getCreateDate()))) {
+                                                    yesterdayList.add(item);
+                                                }
+                                            }
+                                            if (!yesterdayList.isEmpty()) {
+                                                supportUI.showDialogInfo(MainActivity.this,
+                                                        MainActivity.this.getString(R.string.information),
+                                                        String.format(MainActivity.this.getString(R.string.message_sending_past_visit_background), yesterdayList.size()));
 
-                            MyIntentServiceVisitPastDay.startActionActionResendVisit(MainActivity.this, yesterdayList);
-                            sharePreferencesUtil.setValue(CHECK_YESTERDAY_UNSENT_VISITS, supportUI.fromDateToString(new Date()));
-                        }
-                    }
-                    disposableUnSentVisits.dispose();
-                }
+                                                MyIntentServiceVisitPastDay.startActionActionResendVisit(MainActivity.this, yesterdayList);
+                                                sharePreferencesUtil.setValue(CHECK_YESTERDAY_UNSENT_VISITS, supportUI.fromDateToString(new Date()));
+                                            }
+                                        }
+                                        disposables.clear();
+                                    }
+                            )
+            );
 
-                @Override
-                public void onError(Throwable e) {
-                }
-            });
         }
     }
 
@@ -364,59 +359,48 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
             String subS = nfcData.getCreateDate().substring(0, subEnd);
 
             //Verify is there is another post in history within 5 minutes, so i wont send post again
-            viewModel.getListBySubCreateData(subS + "%")
+            disposables.add(nfcDataHistoryViewModel.getListBySubCreateData(subS + "%")
                     .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                     .observeOn(io.reactivex.schedulers.Schedulers.trampoline())
-                    .doOnSubscribe(new Consumer<Disposable>() {
-                        @Override
-                        public void accept(Disposable d) throws Exception {
-                            disposableVisitHistory = d;
-                        }
-                    })
-                    .subscribe(new BlockingBaseObserver<List<NfcData>>() {
-                        @Override
-                        public void onNext(List<NfcData> nfcDatas) {
-                            SupportUI supportUI = new SupportUI();
-                            if (nfcDatas == null || nfcDatas.isEmpty()) {
-                                checkInternetConnectionAndSendPost(nfcData);
-                            } else {
-                                boolean send = true;
-                                for (NfcData item : nfcDatas) {
-                                    long min = SupportUI.diffMinutesDateTimes(
-                                            supportUI.fromStringToDate(item.getCreateDate()),
-                                            supportUI.fromStringToDate(nfcData.getCreateDate()));
-                                    if (min < ConfigValuesApp.MINUTES_WAIT_TO_SEND_AGAIN &&
-                                            item.getCalltype().equals(nfcData.getCalltype())
-                                            && item.getClientId() == nfcData.getClientId()
-                                            && item.getNfc().equals(nfcData.getNfc())) {
-                                        runOnUiThread(() -> {
-                                            if (BuildConfig.DEBUG) {
-                                                new SupportUI().showDialogInfo(MainActivity.this,
-                                                        MainActivity.this.getString(R.string.duplicate_visit),
-                                                        MainActivity.this.getString(R.string.message_duplicate_visit) + "(" + min + "m ago)\n" + item.getUid() + " - " + item.getCreateDate()
-                                                        , () -> showHistoryFragment());
-                                            } else {
-                                                new SupportUI().showDialogInfo(MainActivity.this,
-                                                        MainActivity.this.getString(R.string.duplicate_visit),
-                                                        MainActivity.this.getString(R.string.message_duplicate_visit)
-                                                        , () -> showHistoryFragment());
-                                            }
-                                        });
-                                        send = false;
-                                        break;
+                    .subscribe(nfcDatas -> {
+                                SupportUI supportUI = new SupportUI();
+                                if (nfcDatas == null || nfcDatas.isEmpty()) {
+                                    checkInternetConnectionAndSendPost(nfcData);
+                                } else {
+                                    boolean send = true;
+                                    for (NfcData item : nfcDatas) {
+                                        long min = SupportUI.diffMinutesDateTimes(
+                                                supportUI.fromStringToDate(item.getCreateDate()),
+                                                supportUI.fromStringToDate(nfcData.getCreateDate()));
+                                        if (min < ConfigValuesApp.MINUTES_WAIT_TO_SEND_AGAIN &&
+                                                item.getCalltype().equals(nfcData.getCalltype())
+                                                && item.getClientId() == nfcData.getClientId()
+                                                && item.getNfc().equals(nfcData.getNfc())) {
+                                            runOnUiThread(() -> {
+                                                if (BuildConfig.DEBUG) {
+                                                    new SupportUI().showDialogInfo(MainActivity.this,
+                                                            MainActivity.this.getString(R.string.duplicate_visit),
+                                                            MainActivity.this.getString(R.string.message_duplicate_visit) + "(" + min + "m ago)\n" + item.getUid() + " - " + item.getCreateDate()
+                                                            , () -> showHistoryFragment());
+                                                } else {
+                                                    new SupportUI().showDialogInfo(MainActivity.this,
+                                                            MainActivity.this.getString(R.string.duplicate_visit),
+                                                            MainActivity.this.getString(R.string.message_duplicate_visit)
+                                                            , () -> showHistoryFragment());
+                                                }
+                                            });
+                                            send = false;
+                                            break;
+                                        }
+                                    }
+                                    if (send) {
+                                        checkInternetConnectionAndSendPost(nfcData);
                                     }
                                 }
-                                if (send) {
-                                    checkInternetConnectionAndSendPost(nfcData);
-                                }
+                                disposables.clear();
                             }
-                            disposableVisitHistory.dispose();
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                        }
-                    });
+                    )
+            );
 
             //saving values for next time show defaults
             sharePreferencesUtil.setValue(EMPLOYEEID_PREFERENCE, String.valueOf(nfcData.getEmployeeId()));
@@ -436,12 +420,21 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
             @Override
             public void error() {
                 new SupportUI().showResponse(MainActivity.this, "Error", "Not internet connection!", false);
-                AsyncTask.execute(() -> viewModel.addData(nfcData));
+                AsyncTask.execute(() -> nfcDataHistoryViewModel.addData(nfcData));
             }
         });
     }
 
     private void sendDataPost(NfcData nfcData) {
+
+        if (!verifyClientIsAuthorized(nfcData.getClientId())) {
+            new SupportUI().showDialogInfoUser(this, "Invalide Client", "Client must to be added to the data base.", false,
+                    () -> {
+                        Toast.makeText(MainActivity.this, "test", Toast.LENGTH_SHORT);
+                    });
+            return;
+        }
+
         //clean nfc from view to force user to use card again after submit
         //nfcDataTag.clear();
         //cleanTvNfc();
@@ -464,7 +457,7 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
                         });
                         nfcData.setSend(true);
                         //add to the history
-                        AsyncTask.execute(() -> viewModel.addData(nfcData));
+                        AsyncTask.execute(() -> nfcDataHistoryViewModel.addData(nfcData));
                     }
 
                     @Override
@@ -478,13 +471,28 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
                         });
                         nfcData.setSend(false);
                         //add to the history
-                        AsyncTask.execute(() -> viewModel.addData(nfcData));
+                        AsyncTask.execute(() -> nfcDataHistoryViewModel.addData(nfcData));
                     }
 
                     @Override
                     public void onNext(NfcData nfcData) {
                     }
                 });
+    }
+
+    private boolean verifyClientIsAuthorized(int clientId) {
+        AtomicBoolean isAuthorized = new AtomicBoolean(true);
+        disposables.add(clientGpsViewModal.getListByClientID(clientId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(clientGps -> {
+                            if (clientGps.isEmpty()) {
+                                isAuthorized.set(false);
+                            }
+                        }
+                )
+        );
+        return isAuthorized.get();
     }
 
     private boolean validate() {
@@ -548,6 +556,12 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        disposables.clear();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         //nfcTagHandler.resume(this);
@@ -592,8 +606,8 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
                     myDialogHistory.dismiss();
                 }
                 //deletede from history in order to dont duplicate
-                viewModel.delete(nfcData);
-                //AsyncTask.execute(() -> viewModel.delete(nfcData));
+                nfcDataHistoryViewModel.delete(nfcData);
+                //AsyncTask.execute(() -> nfcDataHistoryViewModel.delete(nfcData));
 
                 employeeid.setText(String.valueOf(nfcData.getEmployeeId()));
                 clientid.setText(String.valueOf(nfcData.getClientId()));

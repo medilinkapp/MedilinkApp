@@ -40,7 +40,7 @@ class PasswordActivity : AppCompatActivity() {
                 finish()
                 sharePreferencesUtil.setValue(key, true)
             } else {
-                SupportUI().showError(this, "Password", "Invalid password!", false);
+                SupportUI().showDialogInfoUser(this, getString(R.string.prompt_password), getString(R.string.invalid_password), false, null);
                 edPassword.text.clear()
             }
         })
