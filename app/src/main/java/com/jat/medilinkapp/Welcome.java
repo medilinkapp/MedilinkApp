@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 public class Welcome extends AppCompatActivity {
 
     public static final String TAG_CLEANUP = "cleanup";
+
     @BindView(R.id.tv_info_unsent_visits)
     TextView tvInfoUnSent;
 

@@ -6,32 +6,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.jat.medilinkapp.BuildConfig;
-import com.jat.medilinkapp.MyFragmentDialogHistory;
-import com.jat.medilinkapp.R;
-import com.jat.medilinkapp.model.entity.NfcData;
-
-import java.util.ArrayList;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.jat.medilinkapp.BuildConfig;
+import com.jat.medilinkapp.MyFragmentDialogClient;
+import com.jat.medilinkapp.R;
+import com.jat.medilinkapp.model.entity.ClientGps;
+import java.util.ArrayList;
 
-public class NfcHistoryAdapter extends RecyclerView.Adapter<NfcHistoryAdapter.ViewHolderNfcData> {
+public class ClientGpsAdapter extends RecyclerView.Adapter<ClientGpsAdapter.ViewHolderNfcData> {
 
-    public static final String IN = "In";
-    public static final String OUT = "Out";
-    public static final String I = "I";
-    ArrayList<NfcData> list;
-    MyFragmentDialogHistory.DialogListener dialogListener;
+    ArrayList<ClientGps> list;
+    MyFragmentDialogClient.DialogListener dialogListener;
 
-    public NfcHistoryAdapter(ArrayList<NfcData> list, MyFragmentDialogHistory.DialogListener dialogListener) {
+    public ClientGpsAdapter(ArrayList<ClientGps> list, MyFragmentDialogClient.DialogListener dialogListener) {
         this.list = list;
         this.dialogListener = dialogListener;
     }
 
-    public void setList(ArrayList<NfcData> tasks) {
-        this.list = tasks;
+    public void setList(ArrayList<ClientGps> list) {
+        this.list = list;
         notifyDataSetChanged();
     }
 
@@ -40,33 +34,30 @@ public class NfcHistoryAdapter extends RecyclerView.Adapter<NfcHistoryAdapter.Vi
     public ViewHolderNfcData onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.item_nfc_hitory_layout, parent, false);
+        View view = inflater.inflate(R.layout.item_client_gps_layout, parent, false);
         return new ViewHolderNfcData(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolderNfcData holder, int position) {
-        NfcData nfcData = list.get(position);
+        ClientGps clientGps = list.get(position);
 
         TextView tvNfcTimeStamp = holder.tvNfcTimeStamp;
         if (BuildConfig.DEBUG) {
-            tvNfcTimeStamp.setText(nfcData.getUid() + " - " + (nfcData.getCalltype().equals(I) ? IN : OUT) + " - " + nfcData.getCreateDate());
+            tvNfcTimeStamp.setText(clientGps.getUid() + " - Client: " + (clientGps.getClientId()
+                    + " - Lat:" + clientGps.getLatitude()
+                    + " - Long:" + clientGps.getLongitude()));
         } else {
-            tvNfcTimeStamp.setText((nfcData.getCalltype().equals(I) ? IN : OUT) + " - " + nfcData.getCreateDate());
+            tvNfcTimeStamp.setText("Client: " + (clientGps.getClientId()));
+
+            ImageView imgStatus = holder.imgSendStatus;
+
+            imgStatus.setImageResource(R.drawable.ic_delete_forever_black_24dp);
+
+            holder.itemView.setOnClickListener((v -> {
+                dialogListener.onFinishSelectionDataClientGps(clientGps);
+            }));
         }
-
-        ImageView imgStatus = holder.imgSendStatus;
-
-        if (nfcData.isSend()) {
-            imgStatus.setImageResource(R.drawable.ic_check_circle_nfc);
-        } else {
-            imgStatus.setImageResource(R.drawable.ic_error_red_42);
-        }
-
-        holder.itemView.setOnClickListener((v -> {
-            dialogListener.onFinishSelectionData(nfcData);
-        }));
-
     }
 
     @Override

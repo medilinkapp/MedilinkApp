@@ -12,23 +12,25 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.jat.medilinkapp.adapters.NfcHistoryAdapter
-import com.jat.medilinkapp.model.entity.NfcData
-import com.jat.medilinkapp.viewmodels.NfcDataHistoryViewModel
+import com.jat.medilinkapp.adapters.ClientGpsAdapter
+import com.jat.medilinkapp.model.entity.ClientGps
+import com.jat.medilinkapp.viewmodels.ClientGpsViewModal
 import com.microsoft.appcenter.utils.HandlerUtils
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Consumer
-import kotlinx.android.synthetic.main.fragment_dialog_nfc_history.*
+import kotlinx.android.synthetic.main.fragment_dialog_client_gps.*
+import kotlinx.android.synthetic.main.fragment_dialog_client_gps.view.*
+import kotlinx.android.synthetic.main.fragment_dialog_nfc_history.view.*
 
 
-class MyFragmentDialogHistory : DialogFragment() {
-    private var nfcHistoryAdapter: NfcHistoryAdapter? = null
-    private var viewModel: NfcDataHistoryViewModel? = null
+class MyFragmentDialogClient : DialogFragment() {
+    private var clientGpsAdapter: ClientGpsAdapter? = null
+    private var viewModel: ClientGpsViewModal? = null
     private val disposables = CompositeDisposable()
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        viewModel = ViewModelProviders.of(this).get(NfcDataHistoryViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(ClientGpsViewModal::class.java)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -37,7 +39,7 @@ class MyFragmentDialogHistory : DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(com.jat.medilinkapp.R.layout.fragment_dialog_nfc_history, container, false)
+        return inflater.inflate(com.jat.medilinkapp.R.layout.fragment_dialog_client_gps, container, false)
     }
 
     override fun onViewCreated(viewDialog: View, savedInstanceState: Bundle?) {
@@ -49,16 +51,12 @@ class MyFragmentDialogHistory : DialogFragment() {
             }
         })
 
-        if (BuildConfig.DEBUG) {
-            btDeleteAll.visibility = View.VISIBLE
-        }
-        btDeleteAll.setOnClickListener(object : View.OnClickListener {
+        btAdd.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
                 AsyncTask.execute(Runnable {
-                    viewModel!!.deleteAll()
+                    //viewModel!!.deleteAll()
                     dismiss()
-                    (activity as MyFragmentDialogHistory.DialogListener).onDeleteData();
-
+                    (activity as MyFragmentDialogClient.DialogListener).onDeleteDataClientGps();
                 })
             }
         })
@@ -68,15 +66,12 @@ class MyFragmentDialogHistory : DialogFragment() {
         disposables.add(viewModel!!.list.subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(io.reactivex.schedulers.Schedulers.trampoline())
                 .subscribe(Consumer { list ->
-                    HandlerUtils.runOnUiThread(Runnable { nfcHistoryAdapter!!.setList(ArrayList(list)); })
-
-                    //nfcHistoryAdapter!!.notifyDataSetChanged();
-
+                    HandlerUtils.runOnUiThread(Runnable { clientGpsAdapter!!.setList(ArrayList(list)); })
                 }));
 
-        nfcHistoryAdapter = NfcHistoryAdapter(ArrayList(), activity as MyFragmentDialogHistory.DialogListener)
-        with(viewDialog.findViewById(com.jat.medilinkapp.R.id.rv_nfc_history) as RecyclerView) {
-            adapter = nfcHistoryAdapter
+        clientGpsAdapter = ClientGpsAdapter(ArrayList(), activity as DialogListener)
+        with(viewDialog.rv_client_gps as RecyclerView) {
+            adapter = clientGpsAdapter
             val linearLayoutManager = LinearLayoutManager(activity);
             linearLayoutManager.reverseLayout = true;
             layoutManager = linearLayoutManager
@@ -104,7 +99,7 @@ class MyFragmentDialogHistory : DialogFragment() {
     }
 
     interface DialogListener {
-        fun onFinishSelectionData(nfcData: NfcData)
-        fun onDeleteData()
+        fun onFinishSelectionDataClientGps(clientGps: ClientGps)
+        fun onDeleteDataClientGps()
     }
 }

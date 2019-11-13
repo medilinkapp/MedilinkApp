@@ -23,7 +23,10 @@ interface ClientGpsDao {
     fun delete(clientGps: ClientGps)
 
     @Query("SELECT * FROM ClientGps where client_id like :clientId")
-    fun getListByClientID(clientId: Int): Observable<List<ClientGps>>
+    fun getObservableListByClientID(clientId: Int): Observable<List<ClientGps>>
+
+    @Query("SELECT * FROM ClientGps where client_id like :clientId")
+    fun getListByClientID(clientId: Int): List<ClientGps>
 
     @Query("SELECT * FROM ClientGps where latitude like :latitude")
     fun getListByLatitude(latitude: Long): Observable<List<ClientGps>>

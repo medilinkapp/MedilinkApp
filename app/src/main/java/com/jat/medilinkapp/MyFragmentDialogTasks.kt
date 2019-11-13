@@ -10,13 +10,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
-import android.widget.EditText
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jat.medilinkapp.adapters.TaskAdapter
 import com.jat.medilinkapp.util.SupportUI
+import kotlinx.android.synthetic.main.fragment_dialog_task.*
 
 
 class MyFragmentDialogTasks : DialogFragment() {
@@ -58,7 +57,6 @@ class MyFragmentDialogTasks : DialogFragment() {
     override fun onViewCreated(viewDialog: View, savedInstanceState: Bundle?) {
         super.onViewCreated(viewDialog, savedInstanceState)
 
-        val btnDone = viewDialog.findViewById<Button>(com.jat.medilinkapp.R.id.btnDone)
         btnDone.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
                 val dialogListener = activity as DialogListener
@@ -67,26 +65,23 @@ class MyFragmentDialogTasks : DialogFragment() {
             }
         })
 
-        val btnAdd = viewDialog.findViewById<Button>(com.jat.medilinkapp.R.id.bt_add)
         btnAdd.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
-                val editText = viewDialog.findViewById<EditText>(com.jat.medilinkapp.R.id.et_task)
-                if (!TextUtils.isEmpty(editText.text.toString())) {
-                    list.add(editText.text.toString())
+                if (!TextUtils.isEmpty(etTask.text.toString())) {
+                    list.add(etTask.text.toString())
                     taskAdapter.notifyDataSetChanged()
-                    editText.setText("")
+                    etTask.setText("")
                 }
             }
         })
 
-        val editText = viewDialog.findViewById<EditText>(com.jat.medilinkapp.R.id.et_task)
 
-        editText.setOnEditorActionListener { v, actionId, event ->
+        etTask.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                if (!TextUtils.isEmpty(editText.text.toString())) {
-                    list.add(editText.text.toString())
+                if (!TextUtils.isEmpty(etTask.text.toString())) {
+                    list.add(etTask.text.toString())
                     taskAdapter.notifyDataSetChanged()
-                    editText.setText("")
+                    etTask.setText("")
                 }
                 true
             } else {
@@ -94,11 +89,11 @@ class MyFragmentDialogTasks : DialogFragment() {
             }
         }
 
-        SupportUI.showKeyboard(editText, context)
+        SupportUI.showKeyboard(etTask, context)
 
         dialog.setCanceledOnTouchOutside(false)
 
-        with(viewDialog.findViewById(com.jat.medilinkapp.R.id.rv_tasks) as RecyclerView) {
+        with(viewDialog.findViewById(com.jat.medilinkapp.R.id.rv_nfc_history) as RecyclerView) {
             adapter = taskAdapter
             layoutManager = GridLayoutManager(activity, 3)
         }

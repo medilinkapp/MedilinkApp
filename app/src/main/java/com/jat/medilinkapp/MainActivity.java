@@ -23,6 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.jat.medilinkapp.backgroudservice.MyIntentServiceVisitPastDay;
+import com.jat.medilinkapp.model.entity.ClientGps;
 import com.jat.medilinkapp.model.entity.NfcData;
 import com.jat.medilinkapp.retro_conf.APIService;
 import com.jat.medilinkapp.retro_conf.ApiUtils;
@@ -39,12 +40,13 @@ import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.jetbrains.annotations.NotNull;
 
-public class MainActivity extends AppCompatActivity implements MyFragmentDialogTasks.DialogListener, MyFragmentDialogHistory.DialogListener {
+public class MainActivity extends AppCompatActivity implements MyFragmentDialogTasks.DialogListener, MyFragmentDialogHistory.DialogListener , MyFragmentDialogClient.DialogListener{
 
     public static final String LIST = "list";
     public static final String NOT_ALERT_DIALOG = "notAlertDialog";
     public static final String DIALOG_TAG = "dialog";
     public static final String DIALOG_TAG_HISTORY = "dialog_history";
+    private static final String DIALOG_TAG_CLIENT = "dialog_client";
     public static final String EMPLOYEEID_PREFERENCE = "employeeid";
     public static final String OFFICEID_PREFERENCE = "officeid";
     public static final String CLIENTID_PREFERENCE = "clientid";
@@ -428,70 +430,75 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
     private void sendDataPost(NfcData nfcData) {
 
         if (!verifyClientIsAuthorized(nfcData.getClientId())) {
-            new SupportUI().showDialogInfoUser(this, "Invalide Client", "Client must to be added to the data base.", false,
+            //add to the history
+            AsyncTask.execute(() -> nfcDataHistoryViewModel.addData(nfcData));
+            new SupportUI().showDialogInfoUser(this, "Invalide Client", "Client must be authorized", false,
                     () -> {
-                        Toast.makeText(MainActivity.this, "test", Toast.LENGTH_SHORT);
+                        ClientGps clientGps = new ClientGps();
+                        clientGps.setClientId(nfcData.getClientId());
+                        clientGps.setLatitude(1000L);
+                        clientGps.setLongitude(100L);
+                        clientGpsViewModal.addData(clientGps);
+                        MyFragmentDialogClient dialogClient = new MyFragmentDialogClient();
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                        Fragment prev = getSupportFragmentManager().findFragmentByTag(DIALOG_TAG_CLIENT);
+                        if (prev != null) {
+                            ft.remove(prev);
+                        }
+                        ft.addToBackStack(null);
+                        dialogClient.show(ft, DIALOG_TAG);
                     });
-            return;
+        } else {
+            //clean nfc from view to force user to use card again after submit
+            //nfcDataTag.clear();
+            //cleanTvNfc();
+            // RxJava
+            final Dialog progress = new SupportUI().showProgress(this);
+            mAPIService = ApiUtils.INSTANCE.getApiService();
+            mAPIService.sendPost(nfcData)
+                    .subscribeOn(rx.schedulers.Schedulers.newThread())
+                    .observeOn(rx.schedulers.Schedulers.trampoline())
+                    .subscribe(new rx.Observer<NfcData>() {
+                        @Override
+                        public void onCompleted() {
+                            progress.dismiss();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    new SupportUI().showResponse(MainActivity.this, "Sent", "Data was sent.", true);
+                                }
+                            });
+                            nfcData.setSend(true);
+                            //add to the history
+                            AsyncTask.execute(() -> nfcDataHistoryViewModel.addData(nfcData));
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            progress.dismiss();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    new SupportUI().showResponse(MainActivity.this, "Error", e.getLocalizedMessage(), false);
+                                }
+                            });
+                            nfcData.setSend(false);
+                            //add to the history
+                            AsyncTask.execute(() -> nfcDataHistoryViewModel.addData(nfcData));
+                        }
+
+                        @Override
+                        public void onNext(NfcData nfcData) {
+                        }
+                    });
         }
-
-        //clean nfc from view to force user to use card again after submit
-        //nfcDataTag.clear();
-        //cleanTvNfc();
-
-        // RxJava
-        final Dialog progress = new SupportUI().showProgress(this);
-        mAPIService = ApiUtils.INSTANCE.getApiService();
-        mAPIService.sendPost(nfcData)
-                .subscribeOn(rx.schedulers.Schedulers.newThread())
-                .observeOn(rx.schedulers.Schedulers.trampoline())
-                .subscribe(new rx.Observer<NfcData>() {
-                    @Override
-                    public void onCompleted() {
-                        progress.dismiss();
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                new SupportUI().showResponse(MainActivity.this, "Sent", "Data was sent.", true);
-                            }
-                        });
-                        nfcData.setSend(true);
-                        //add to the history
-                        AsyncTask.execute(() -> nfcDataHistoryViewModel.addData(nfcData));
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        progress.dismiss();
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                new SupportUI().showResponse(MainActivity.this, "Error", e.getLocalizedMessage(), false);
-                            }
-                        });
-                        nfcData.setSend(false);
-                        //add to the history
-                        AsyncTask.execute(() -> nfcDataHistoryViewModel.addData(nfcData));
-                    }
-
-                    @Override
-                    public void onNext(NfcData nfcData) {
-                    }
-                });
     }
 
     private boolean verifyClientIsAuthorized(int clientId) {
         AtomicBoolean isAuthorized = new AtomicBoolean(true);
-        disposables.add(clientGpsViewModal.getListByClientID(clientId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(clientGps -> {
-                            if (clientGps.isEmpty()) {
-                                isAuthorized.set(false);
-                            }
-                        }
-                )
-        );
+        if (clientGpsViewModal.getListByClientID(clientId).isEmpty()) {
+            isAuthorized.set(false);
+        }
         return isAuthorized.get();
     }
 
@@ -653,5 +660,16 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
         tvNfc.setVisibility(View.VISIBLE);
         layoutTvNfc.setVisibility(View.VISIBLE);
         findViewById(R.id.img_nfc_checked).setVisibility(View.GONE);
+    }
+
+
+    @Override
+    public void onFinishSelectionDataClientGps(@NotNull ClientGps clientGps) {
+
+    }
+
+    @Override
+    public void onDeleteDataClientGps() {
+
     }
 }

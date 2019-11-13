@@ -13,7 +13,11 @@ class ClientGpsViewModal(application: Application) : AndroidViewModel(applicatio
     val list: Observable<List<ClientGps>>
         get() = clientGpsDataRepository.list
 
-    fun getListByClientID(clientId: Int): Observable<List<ClientGps>> {
+    fun getObservableListByClientID(clientId: Int): Observable<List<ClientGps>> {
+        return clientGpsDataRepository.getObservableListByClientID(clientId)
+    }
+
+    fun getListByClientID(clientId: Int): List<ClientGps> {
         return clientGpsDataRepository.getListByClientID(clientId)
     }
 

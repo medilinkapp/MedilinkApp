@@ -37,7 +37,11 @@ class ClientGpsDataRepository {
         return appDatabase.clientGpsDao().getListByLatitude(latitude)
     }
 
-    fun getListByClientID(clientId: Int): Observable<List<ClientGps>> {
+    fun getObservableListByClientID(clientId: Int): Observable<List<ClientGps>> {
+        return appDatabase.clientGpsDao().getObservableListByClientID(clientId)
+    }
+
+    fun getListByClientID(clientId: Int): List<ClientGps> {
         return appDatabase.clientGpsDao().getListByClientID(clientId)
     }
 
