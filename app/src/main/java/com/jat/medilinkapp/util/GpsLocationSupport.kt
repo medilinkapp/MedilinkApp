@@ -10,10 +10,10 @@ import android.os.Bundle
 import androidx.core.app.ActivityCompat
 
 class GpsLocationSupport {
-    private var longitude = 0.0
-    private var latitude = 0.0
+    var longitude = 0.0
+    var latitude = 0.0
 
-    private fun getLatLong(context: Context) {
+    fun getLatLong(context: Context) {
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val listener = MyLocationListener()
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

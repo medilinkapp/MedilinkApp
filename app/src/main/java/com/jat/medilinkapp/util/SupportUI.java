@@ -91,7 +91,7 @@ public class SupportUI {
     }
 
 
-    public void showDialogInfoUser(Context context, String titleMsg, String message, boolean success, ISingleActionCallBack callBack ) {
+    public void showDialogInfoUser(Context context, String titleMsg, String message, boolean success, ISingleActionCallBack callBack) {
         // custom dialog
         final Dialog dialogWF;
         dialogWF = new Dialog(context, R.style.dialogStyle);
@@ -124,6 +124,41 @@ public class SupportUI {
         btOK.setOnClickListener(v -> {
             if (callBack != null) {
                 callBack.callBack();
+            }
+            dialogWF.dismiss();
+        });
+        dialogWF.show();
+    }
+
+    public static void showDialogRequestPassword(Context context, String titleMsg, String message, ISingleActionParameterCallBack callBack) {
+        // custom dialog
+        final Dialog dialogWF;
+        dialogWF = new Dialog(context, R.style.dialogStyle);
+        dialogWF.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogWF.setContentView(R.layout.dialog_request_password);
+        dialogWF.setCanceledOnTouchOutside(false);
+        dialogWF.setCancelable(false);
+        // Setting dialogview
+        Window window = dialogWF.getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+        wlp.gravity = Gravity.CENTER_VERTICAL;
+        // wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        window.setAttributes(wlp);
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        TextView tvTitle = dialogWF.findViewById(R.id.tv_title_layout);
+        TextView tvTitleMessage = dialogWF.findViewById(R.id.tv_title_message);
+        TextView tvMsgDialog = dialogWF.findViewById(R.id.tv_msg_dialog);
+        Button btOK = dialogWF.findViewById(R.id.bt_ok);
+
+        tvTitleMessage.setText(titleMsg);
+        tvMsgDialog.setText(message);
+
+        EditText etPassword = dialogWF.findViewById(R.id.et_password);
+
+        btOK.setOnClickListener(v -> {
+            if (callBack != null) {
+                callBack.callBack(etPassword.getText().toString());
             }
             dialogWF.dismiss();
         });

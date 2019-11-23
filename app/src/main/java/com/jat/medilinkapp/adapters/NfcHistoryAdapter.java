@@ -83,7 +83,7 @@ public class NfcHistoryAdapter extends RecyclerView.Adapter<NfcHistoryAdapter.Vi
 
         public ViewHolderNfcData(@NonNull View v) {
             super(v);
-            tvNfcTimeStamp = (TextView) v.findViewById(R.id.tv_nfc_time_stamp);
+            tvNfcTimeStamp = (TextView) v.findViewById(R.id.tv_client_gps);
             imgSendStatus = (ImageView) v.findViewById(R.id.img_send_status);
         }
     }

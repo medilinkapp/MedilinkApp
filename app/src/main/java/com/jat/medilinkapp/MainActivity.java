@@ -40,7 +40,7 @@ import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.jetbrains.annotations.NotNull;
 
-public class MainActivity extends AppCompatActivity implements MyFragmentDialogTasks.DialogListener, MyFragmentDialogHistory.DialogListener , MyFragmentDialogClient.DialogListener{
+public class MainActivity extends AppCompatActivity implements MyFragmentDialogTasks.DialogListener, MyFragmentDialogHistory.DialogListener, MyFragmentDialogClient.DialogListener {
 
     public static final String LIST = "list";
     public static final String NOT_ALERT_DIALOG = "notAlertDialog";
@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
     ArrayList<String> listTasks;
 
     MyFragmentDialogHistory myDialogHistory;
+    MyFragmentDialogClient myDialogClientGps;
     private final CompositeDisposable disposables = new CompositeDisposable();
     private SharePreferencesUtil sharePreferencesUtil;
 
@@ -294,7 +295,19 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
             ft.remove(prev);
         }
         ft.addToBackStack(null);
-        myDialogHistory.show(ft, DIALOG_TAG);
+        myDialogHistory.show(ft, DIALOG_TAG_HISTORY);
+    }
+
+    @OnClick({R.id.bt_history, R.id.tv_client_gps})
+    void showClientsGps() {
+        myDialogClientGps = new MyFragmentDialogClient();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag(DIALOG_TAG_CLIENT);
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+        myDialogClientGps.show(ft, DIALOG_TAG_CLIENT);
     }
 
     @OnClick(R.id.bt_add_tasks)
@@ -434,12 +447,11 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
             AsyncTask.execute(() -> nfcDataHistoryViewModel.addData(nfcData));
             new SupportUI().showDialogInfoUser(this, "Invalide Client", "Client must be authorized", false,
                     () -> {
-                        ClientGps clientGps = new ClientGps();
-                        clientGps.setClientId(nfcData.getClientId());
-                        clientGps.setLatitude(1000L);
-                        clientGps.setLongitude(100L);
-                        clientGpsViewModal.addData(clientGps);
                         MyFragmentDialogClient dialogClient = new MyFragmentDialogClient();
+                        Bundle bundle = new Bundle();
+                        bundle.putBoolean(NOT_ALERT_DIALOG, true);
+                        bundle.putInt(MyFragmentDialogClient.KEY_CLIENT_ID, nfcData.getClientId());
+                        dialogClient.setArguments(bundle);
                         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                         Fragment prev = getSupportFragmentManager().findFragmentByTag(DIALOG_TAG_CLIENT);
                         if (prev != null) {
@@ -665,7 +677,18 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
 
     @Override
     public void onFinishSelectionDataClientGps(@NotNull ClientGps clientGps) {
-
+        SupportUI.showDialogRequestPassword(this, "Password",
+                (BuildConfig.DEBUG) ? "Enter password " + SupportUI.getPassword() : "Enter password",
+                value -> {
+                    if (SupportUI.validatePassword(value.trim())) {
+                        new SupportUI().showDialogInfoUser(this,
+                                "Successful", "Client Deleted", true, () -> {
+                                });
+                        clientGpsViewModal.delete(clientGps);
+                    } else {
+                        new SupportUI().showDialogInfoUser(this, getString(R.string.prompt_password), getString(R.string.invalid_password), false, null);
+                    }
+                });
     }
 
     @Override

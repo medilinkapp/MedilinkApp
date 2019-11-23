@@ -17,10 +17,10 @@ data class ClientGps(
         var clientId: Int? = null,
 
         @ColumnInfo(name = "latitude")
-        var latitude: Long? = null,
+        var latitude: Double? = null,
 
         @ColumnInfo(name = "longitude")
-        var longitude: Long? = null) : Parcelable {
+        var longitude: Double? = null) : Parcelable {
 
     companion object {
         @JvmField
@@ -33,8 +33,8 @@ data class ClientGps(
     constructor(source: Parcel) : this(
             source.readInt(),
             source.readValue(Int::class.java.classLoader) as Int?,
-            source.readValue(Int::class.java.classLoader) as Long?,
-            source.readValue(Int::class.java.classLoader) as Long?
+            source.readValue(Int::class.java.classLoader) as Double?,
+            source.readValue(Int::class.java.classLoader) as Double?
     )
 
     override fun describeContents() = 0

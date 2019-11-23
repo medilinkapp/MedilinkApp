@@ -42,22 +42,18 @@ public class ClientGpsAdapter extends RecyclerView.Adapter<ClientGpsAdapter.View
     public void onBindViewHolder(@NonNull ViewHolderNfcData holder, int position) {
         ClientGps clientGps = list.get(position);
 
-        TextView tvNfcTimeStamp = holder.tvNfcTimeStamp;
+        TextView tvClientGps = holder.tvClientGps;
         if (BuildConfig.DEBUG) {
-            tvNfcTimeStamp.setText(clientGps.getUid() + " - Client: " + (clientGps.getClientId()
+            tvClientGps.setText(clientGps.getUid() + " - Client: " + (clientGps.getClientId()
                     + " - Lat:" + clientGps.getLatitude()
                     + " - Long:" + clientGps.getLongitude()));
         } else {
-            tvNfcTimeStamp.setText("Client: " + (clientGps.getClientId()));
-
-            ImageView imgStatus = holder.imgSendStatus;
-
-            imgStatus.setImageResource(R.drawable.ic_delete_forever_black_24dp);
-
-            holder.itemView.setOnClickListener((v -> {
-                dialogListener.onFinishSelectionDataClientGps(clientGps);
-            }));
+            tvClientGps.setText("Client: " + (clientGps.getClientId()));
         }
+        ImageView imgDelete = holder.imgDelete;
+        holder.imgDelete.setOnClickListener((v -> {
+            dialogListener.onFinishSelectionDataClientGps(clientGps);
+        }));
     }
 
     @Override
@@ -69,13 +65,13 @@ public class ClientGpsAdapter extends RecyclerView.Adapter<ClientGpsAdapter.View
     }
 
     class ViewHolderNfcData extends RecyclerView.ViewHolder {
-        private TextView tvNfcTimeStamp;
-        private ImageView imgSendStatus;
+        private TextView tvClientGps;
+        private ImageView imgDelete;
 
         public ViewHolderNfcData(@NonNull View v) {
             super(v);
-            tvNfcTimeStamp = (TextView) v.findViewById(R.id.tv_nfc_time_stamp);
-            imgSendStatus = (ImageView) v.findViewById(R.id.img_send_status);
+            tvClientGps = (TextView) v.findViewById(R.id.tv_client_gps);
+            imgDelete = (ImageView) v.findViewById(R.id.img_delete_client);
         }
     }
 }
