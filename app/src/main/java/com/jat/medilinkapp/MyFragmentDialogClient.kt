@@ -1,16 +1,17 @@
 package com.jat.medilinkapp
 
+import android.Manifest
 import android.app.Dialog
 import android.content.Context
-import android.content.Context.LOCATION_SERVICE
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -33,11 +34,10 @@ class MyFragmentDialogClient : DialogFragment() {
     private val disposables = CompositeDisposable()
     private val supportUI: SupportUI = SupportUI()
 
-    // inside a basic activity
-    private var locationManager: LocationManager? = null
-
     companion object {
         const val KEY_CLIENT_ID = "KEY_CLIENT_ID"
+        private val TAG = "LocationProvider"
+        private val REQUEST_PERMISSIONS_REQUEST_CODE = 34
     }
 
     override fun onAttach(context: Context?) {
@@ -99,7 +99,7 @@ class MyFragmentDialogClient : DialogFragment() {
                     HandlerUtils.runOnUiThread(Runnable { clientGpsAdapter!!.setList(ArrayList(list)); })
                 }));
 
-        clientGpsAdapter = ClientGpsAdapter(ArrayList(), activity as DialogListener)
+        //clientGpsAdapter = ClientGpsAdapter(ArrayList(), activity as MyFragmentDialogClient.DialogListener)
         with(viewDialog.rv_client_gps as RecyclerView) {
             adapter = clientGpsAdapter
             val linearLayoutManager = LinearLayoutManager(activity);
@@ -119,8 +119,6 @@ class MyFragmentDialogClient : DialogFragment() {
             setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
         else
             setStyle(DialogFragment.STYLE_NORMAL, com.jat.medilinkapp.R.style.WideDialog)
-        // Create persistent LocationManager reference
-        locationManager = activity!!.getSystemService(LOCATION_SERVICE) as LocationManager?;
     }
 
     private fun addClient(value: String) {
@@ -131,37 +129,19 @@ class MyFragmentDialogClient : DialogFragment() {
                 "Enter password ${if (BuildConfig.DEBUG) SupportUI.getPassword() else ""}",
                 ISingleActionParameterCallBack { value ->
                     if (SupportUI.validatePassword(value.trim())) {
-                        try {
-                            // Request location updates
-                            locationManager?.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, locationListener);
-                        } catch (ex: SecurityException) {
-                            Log.d("myTag", "Security Exception, no location available");
-                        }
+                        val clientGps = ClientGps()
+                        clientGps.clientId = Integer.parseInt(etClientid.text.toString())
+                        //clientGps.latitude = location.latitude
+                        //clientGps.longitude = location.longitude
+                        viewModel!!.addData(clientGps)
+                        etClientid.text.clear()
+                        SupportUI().showDialogInfoUser(this@MyFragmentDialogClient.context, "Successful", "Client Added", true, null)
                     } else {
                         SupportUI().showDialogInfoUser(this@MyFragmentDialogClient.context, getString(R.string.prompt_password), getString(R.string.invalid_password), false, null);
                     }
                 })
     }
 
-    //define the listener
-    private val locationListener: LocationListener = object : LocationListener {
-        override fun onLocationChanged(location: Location) {
-            etClientid.setText("" + location.longitude + ":" + location.latitude);
-
-            val clientGps = ClientGps()
-            clientGps.clientId = Integer.parseInt(etClientid.text.toString())
-            clientGps.latitude = location.latitude
-            clientGps.longitude = location.longitude
-            viewModel!!.addData(clientGps)
-            etClientid.text.clear()
-            SupportUI().showDialogInfoUser(this@MyFragmentDialogClient.context, "Successful", "Client Added", true, null)
-
-        }
-
-        override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
-        override fun onProviderEnabled(provider: String) {}
-        override fun onProviderDisabled(provider: String) {}
-    }
 
     interface DialogListener {
         fun onFinishSelectionDataClientGps(clientGps: ClientGps)
@@ -172,4 +152,6 @@ class MyFragmentDialogClient : DialogFragment() {
         super.onDestroyView()
         disposables.clear()
     }
+
+
 }

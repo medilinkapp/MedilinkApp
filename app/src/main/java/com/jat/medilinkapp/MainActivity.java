@@ -40,7 +40,7 @@ import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.jetbrains.annotations.NotNull;
 
-public class MainActivity extends AppCompatActivity implements MyFragmentDialogTasks.DialogListener, MyFragmentDialogHistory.DialogListener, MyFragmentDialogClient.DialogListener {
+public class MainActivity extends AppCompatActivity implements MyFragmentDialogTasks.DialogListener, MyFragmentDialogHistory.DialogListener {
 
     public static final String LIST = "list";
     public static final String NOT_ALERT_DIALOG = "notAlertDialog";
@@ -285,7 +285,6 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
         }
     }
 
-
     @OnClick({R.id.bt_history, R.id.tv_history_visit_bt})
     void showHistoryFragment() {
         myDialogHistory = new MyFragmentDialogHistory();
@@ -300,14 +299,17 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
 
     @OnClick({R.id.bt_history, R.id.tv_client_gps})
     void showClientsGps() {
-        myDialogClientGps = new MyFragmentDialogClient();
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        Fragment prev = getSupportFragmentManager().findFragmentByTag(DIALOG_TAG_CLIENT);
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
-        myDialogClientGps.show(ft, DIALOG_TAG_CLIENT);
+//        myDialogClientGps = new MyFragmentDialogClient();
+//        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//        Fragment prev = getSupportFragmentManager().findFragmentByTag(DIALOG_TAG_CLIENT);
+//        if (prev != null) {
+//            ft.remove(prev);
+//        }
+//        ft.addToBackStack(null);
+//        myDialogClientGps.show(ft, DIALOG_TAG_CLIENT);
+        Intent intent = new Intent(this, ClientGpsActivity.class);
+        //intent.putExtra(ClientGpsActivity.KEY_CLIENT_ID,"John Doe")
+        startActivity(intent);
     }
 
     @OnClick(R.id.bt_add_tasks)
@@ -447,18 +449,22 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
             AsyncTask.execute(() -> nfcDataHistoryViewModel.addData(nfcData));
             new SupportUI().showDialogInfoUser(this, "Invalide Client", "Client must be authorized", false,
                     () -> {
-                        MyFragmentDialogClient dialogClient = new MyFragmentDialogClient();
-                        Bundle bundle = new Bundle();
-                        bundle.putBoolean(NOT_ALERT_DIALOG, true);
-                        bundle.putInt(MyFragmentDialogClient.KEY_CLIENT_ID, nfcData.getClientId());
-                        dialogClient.setArguments(bundle);
-                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                        Fragment prev = getSupportFragmentManager().findFragmentByTag(DIALOG_TAG_CLIENT);
-                        if (prev != null) {
-                            ft.remove(prev);
-                        }
-                        ft.addToBackStack(null);
-                        dialogClient.show(ft, DIALOG_TAG);
+//                        MyFragmentDialogClient dialogClient = new MyFragmentDialogClient();
+//                        Bundle bundle = new Bundle();
+//                        bundle.putBoolean(NOT_ALERT_DIALOG, true);
+//                        bundle.putInt(MyFragmentDialogClient.KEY_CLIENT_ID, nfcData.getClientId());
+//                        dialogClient.setArguments(bundle);
+//                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//                        Fragment prev = getSupportFragmentManager().findFragmentByTag(DIALOG_TAG_CLIENT);
+//                        if (prev != null) {
+//                            ft.remove(prev);
+//                        }
+//                        ft.addToBackStack(null);
+//                        dialogClient.show(ft, DIALOG_TAG);
+
+                        Intent intent = new Intent(this, ClientGpsActivity.class);
+                        intent.putExtra(ClientGpsActivity.KEY_CLIENT_ID, nfcData.getClientId());
+                        startActivity(intent);
                     });
         } else {
             //clean nfc from view to force user to use card again after submit
@@ -675,24 +681,5 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
     }
 
 
-    @Override
-    public void onFinishSelectionDataClientGps(@NotNull ClientGps clientGps) {
-        SupportUI.showDialogRequestPassword(this, "Password",
-                (BuildConfig.DEBUG) ? "Enter password " + SupportUI.getPassword() : "Enter password",
-                value -> {
-                    if (SupportUI.validatePassword(value.trim())) {
-                        new SupportUI().showDialogInfoUser(this,
-                                "Successful", "Client Deleted", true, () -> {
-                                });
-                        clientGpsViewModal.delete(clientGps);
-                    } else {
-                        new SupportUI().showDialogInfoUser(this, getString(R.string.prompt_password), getString(R.string.invalid_password), false, null);
-                    }
-                });
-    }
 
-    @Override
-    public void onDeleteDataClientGps() {
-
-    }
 }

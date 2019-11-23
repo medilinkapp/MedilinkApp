@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.jat.medilinkapp.MainActivity;
@@ -302,7 +303,7 @@ public class SupportUI {
         showDialogInfo(activity, titleMsg, message, null);
     }
 
-    public void showDialogInfo(MainActivity activity, String titleMsg, String message, ISingleActionCallBack callBack) {
+    public void showDialogInfo(AppCompatActivity activity, String titleMsg, String message, ISingleActionCallBack callBack) {
         // custom dialog
         final Dialog dialogWF;
         dialogWF = new Dialog(activity, R.style.dialogStyle);

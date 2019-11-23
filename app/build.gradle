@@ -25,12 +25,13 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.jat.medilinkapp"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -120,6 +121,8 @@ dependencies {
     implementation "androidx.work:work-runtime:$work_version"
     // optional - RxJava2 support
     implementation "androidx.work:work-rxjava2:$work_version"
+
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
 
 }
 repositories {
