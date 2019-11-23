@@ -157,8 +157,11 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
 
         checkUnsentVisitsToSendInBackGround();
 
-
         initUI();
+
+        if(getIntent().hasExtra(Welcome.OPEN_VISIT)){
+            showHistoryFragment();
+        }
     }
 
     @Override
@@ -176,7 +179,6 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
                     supportGpsActivity.onRequestPermissionsResult(requestCode, permissions, grantResults);
                 }
                 break;
-
         }
     }
 
