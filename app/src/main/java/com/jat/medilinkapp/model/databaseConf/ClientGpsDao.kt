@@ -28,6 +28,9 @@ interface ClientGpsDao {
     @Query("SELECT * FROM ClientGps where client_id like :clientId")
     fun getListByClientID(clientId: Int): List<ClientGps>
 
+    @Query("SELECT * FROM ClientGps WHERE client_id = :id")
+    fun getById(id: Int): ClientGps
+
     @Query("SELECT * FROM ClientGps where latitude like :latitude")
     fun getListByLatitude(latitude: Long): Observable<List<ClientGps>>
 

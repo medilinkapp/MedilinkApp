@@ -3,6 +3,7 @@ package com.jat.medilinkapp;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.nfc.NfcAdapter;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import com.jat.medilinkapp.retro_conf.APIService;
 import com.jat.medilinkapp.retro_conf.ApiUtils;
 import com.jat.medilinkapp.util.IRxActionCallBack;
 import com.jat.medilinkapp.util.SharePreferencesUtil;
+import com.jat.medilinkapp.util.SupportGpsActivity;
 import com.jat.medilinkapp.util.SupportUI;
 import com.jat.medilinkapp.viewmodels.ClientGpsViewModal;
 import com.jat.medilinkapp.viewmodels.NfcDataHistoryViewModel;
@@ -40,7 +42,7 @@ import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.jetbrains.annotations.NotNull;
 
-public class MainActivity extends AppCompatActivity implements MyFragmentDialogTasks.DialogListener, MyFragmentDialogHistory.DialogListener {
+public class MainActivity extends AppCompatActivity implements MyFragmentDialogTasks.DialogListener, MyFragmentDialogHistory.DialogListener, SupportGpsActivity.CallBackGPS {
 
     public static final String LIST = "list";
     public static final String NOT_ALERT_DIALOG = "notAlertDialog";
@@ -98,7 +100,11 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
     //No more in use
     //private NfcDataTag nfcDataTag;
 
+    SupportGpsActivity supportGpsActivity;
+
     public static final int PERMISSION_REQUEST_CODE = 1;
+    private NfcData currentNfcData;
+    private ClientGps currentClientGps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +118,30 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
         sharePreferencesUtil = new SharePreferencesUtil(this);
         nfcDataHistoryViewModel = ViewModelProviders.of(this).get(NfcDataHistoryViewModel.class);
         clientGpsViewModal = ViewModelProviders.of(this).get(ClientGpsViewModal.class);
+
+        supportGpsActivity = new SupportGpsActivity(this, new SupportGpsActivity.CallBackGPS() {
+            @Override
+            public void onRequestPermissionsResultGps() {
+
+            }
+
+            @Override
+            public void acction(@NotNull Location locationHere) {
+
+                Location client_location = new Location("client_location");
+                client_location.setLatitude(currentClientGps.getLatitude());
+                client_location.setLongitude(currentClientGps.getLongitude());
+
+                double distance = locationHere.distanceTo(client_location);
+
+                if (distance > 100) {
+                    currentNfcData.setGps("D");
+                } else if (distance < 100) {
+                    currentNfcData.setGps("Y");
+                }
+                sendPostAfterEvaluateGPS(currentNfcData);
+            }
+        });
 
         //nfcDataTag = new NfcDataTag("", "");
 
@@ -127,6 +157,7 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
 
         checkUnsentVisitsToSendInBackGround();
 
+
         initUI();
     }
 
@@ -140,6 +171,12 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
                     Toast.makeText(this, "Permission Denied. We can't get phone number.", Toast.LENGTH_LONG).show();
                 }
                 break;
+            case SupportGpsActivity.PERMISSION_ID:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    supportGpsActivity.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                }
+                break;
+
         }
     }
 
@@ -449,67 +486,65 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
             AsyncTask.execute(() -> nfcDataHistoryViewModel.addData(nfcData));
             new SupportUI().showDialogInfoUser(this, "Invalide Client", "Client must be authorized", false,
                     () -> {
-//                        MyFragmentDialogClient dialogClient = new MyFragmentDialogClient();
-//                        Bundle bundle = new Bundle();
-//                        bundle.putBoolean(NOT_ALERT_DIALOG, true);
-//                        bundle.putInt(MyFragmentDialogClient.KEY_CLIENT_ID, nfcData.getClientId());
-//                        dialogClient.setArguments(bundle);
-//                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//                        Fragment prev = getSupportFragmentManager().findFragmentByTag(DIALOG_TAG_CLIENT);
-//                        if (prev != null) {
-//                            ft.remove(prev);
-//                        }
-//                        ft.addToBackStack(null);
-//                        dialogClient.show(ft, DIALOG_TAG);
-
                         Intent intent = new Intent(this, ClientGpsActivity.class);
                         intent.putExtra(ClientGpsActivity.KEY_CLIENT_ID, nfcData.getClientId());
                         startActivity(intent);
                     });
         } else {
-            //clean nfc from view to force user to use card again after submit
-            //nfcDataTag.clear();
-            //cleanTvNfc();
-            // RxJava
-            final Dialog progress = new SupportUI().showProgress(this);
-            mAPIService = ApiUtils.INSTANCE.getApiService();
-            mAPIService.sendPost(nfcData)
-                    .subscribeOn(rx.schedulers.Schedulers.newThread())
-                    .observeOn(rx.schedulers.Schedulers.trampoline())
-                    .subscribe(new rx.Observer<NfcData>() {
-                        @Override
-                        public void onCompleted() {
-                            progress.dismiss();
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    new SupportUI().showResponse(MainActivity.this, "Sent", "Data was sent.", true);
-                                }
-                            });
-                            nfcData.setSend(true);
-                            //add to the history
-                            AsyncTask.execute(() -> nfcDataHistoryViewModel.addData(nfcData));
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            progress.dismiss();
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    new SupportUI().showResponse(MainActivity.this, "Error", e.getLocalizedMessage(), false);
-                                }
-                            });
-                            nfcData.setSend(false);
-                            //add to the history
-                            AsyncTask.execute(() -> nfcDataHistoryViewModel.addData(nfcData));
-                        }
-
-                        @Override
-                        public void onNext(NfcData nfcData) {
-                        }
-                    });
+            currentNfcData = nfcData;
+            currentClientGps = clientGpsViewModal.getByClientID(nfcData.getClientId());
+            if (currentClientGps != null
+                    && currentClientGps.getLongitude() != null
+                    && currentClientGps.getLatitude() != null) {
+                supportGpsActivity.getLastLocation();
+            } else {
+                currentNfcData.setGps("N");
+                sendPostAfterEvaluateGPS(currentNfcData);
+            }
         }
+    }
+
+    private void sendPostAfterEvaluateGPS(NfcData nfcData) {
+        // RxJava
+        final Dialog progress = new SupportUI().showProgress(this);
+        mAPIService = ApiUtils.INSTANCE.getApiService();
+        mAPIService.sendPost(nfcData)
+                .subscribeOn(rx.schedulers.Schedulers.newThread())
+                .observeOn(rx.schedulers.Schedulers.trampoline())
+                .subscribe(new rx.Observer<NfcData>() {
+                    @Override
+                    public void onCompleted() {
+                        progress.dismiss();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                new SupportUI().showResponse(MainActivity.this, "Sent", "Data was sent.", true);
+                            }
+                        });
+                        nfcData.setSend(true);
+                        //add to the history
+                        AsyncTask.execute(() -> nfcDataHistoryViewModel.addData(nfcData));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        progress.dismiss();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                new SupportUI().showResponse(MainActivity.this, "Error", e.getLocalizedMessage(), false);
+                            }
+                        });
+                        nfcData.setSend(false);
+                        //add to the history
+                        AsyncTask.execute(() -> nfcDataHistoryViewModel.addData(nfcData));
+                    }
+
+                    @Override
+                    public void onNext(NfcData nfcData) {
+                    }
+                });
+
     }
 
     private boolean verifyClientIsAuthorized(int clientId) {
@@ -681,5 +716,13 @@ public class MainActivity extends AppCompatActivity implements MyFragmentDialogT
     }
 
 
+    @Override
+    public void onRequestPermissionsResultGps() {
 
+    }
+
+    @Override
+    public void acction(@NotNull Location mLastLocation) {
+
+    }
 }

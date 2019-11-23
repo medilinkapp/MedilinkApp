@@ -21,6 +21,10 @@ class ClientGpsViewModal(application: Application) : AndroidViewModel(applicatio
         return clientGpsDataRepository.getListByClientID(clientId)
     }
 
+    fun getByClientID(clientId: Int): ClientGps {
+        return clientGpsDataRepository.getByClientID(clientId)
+    }
+
     fun getListByLatitude(latitude: Long): Observable<List<ClientGps>> {
         return clientGpsDataRepository.getListByLatitude(latitude)
     }

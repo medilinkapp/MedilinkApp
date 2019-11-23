@@ -45,5 +45,9 @@ class ClientGpsDataRepository {
         return appDatabase.clientGpsDao().getListByClientID(clientId)
     }
 
+    fun getByClientID(clientId: Int): ClientGps {
+        return appDatabase.clientGpsDao().getById(clientId)
+    }
+
 
 }
